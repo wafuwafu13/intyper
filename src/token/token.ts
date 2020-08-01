@@ -19,8 +19,18 @@ export namespace TokenDef {
   export const INT = 'INT' // 1232454
 
   // 演算子
-  export const ASSIGN: string = '='
+  export const ASSIGN = '='
   export const PLUS = '+'
+  export const MINUS = '-'
+  export const BANG = '!'
+  export const ASTERISK = '*'
+  export const SLASH = '/'
+
+  export const LT = '<'
+  export const GT = '>'
+
+  export const EQ = '=='
+  export const NOT_EQ = '!='
 
   // デリミタ
   export const COMMA = ','
@@ -34,11 +44,21 @@ export namespace TokenDef {
   // キーワード
   export const FUNCTION = 'FUNCTION'
   export const LET = 'LET'
+  export const TRUE = 'TRUE'
+  export const FALSE = 'FALSE'
+  export const IF = 'IF'
+  export const ELSE = 'ELSE'
+  export const RETURN = 'RETURN'
 }
 
 export const keywords: { [key: string]: string } = {
   fn: TokenDef.FUNCTION,
   let: TokenDef.LET,
+  true: TokenDef.TRUE,
+  false: TokenDef.FALSE,
+  if: TokenDef.IF,
+  else: TokenDef.ELSE,
+  return: TokenDef.RETURN,
 }
 
 export const LookupIdent = (ident: string): string => {

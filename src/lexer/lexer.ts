@@ -30,6 +30,14 @@ export class Lexer {
     this.readPosition += 1
   }
 
+  peekChar(): string | number {
+    if (this.readPosition >= this.input.length) {
+      return 0
+    } else {
+      return this.input[this.readPosition]
+    }
+  }
+
   readIdentifier(): string {
     let position = this.position
     while (this.isLetter(this.ch)) {
@@ -88,7 +96,14 @@ export class Lexer {
 
     switch (this.ch) {
       case '=':
-        tok = this.newToken(TokenDef.ASSIGN, this.ch)
+        if (this.peekChar() == '=') {
+          let ch = this.ch
+          this.readChar()
+          let literal = String(ch) + String(this.ch)
+          tok = this.newToken(TokenDef.EQ, literal)
+        } else {
+          tok = this.newToken(TokenDef.ASSIGN, this.ch)
+        }
         break
       case ';':
         tok = this.newToken(TokenDef.SEMICOLON, this.ch)
@@ -104,6 +119,31 @@ export class Lexer {
         break
       case '+':
         tok = this.newToken(TokenDef.PLUS, this.ch)
+        break
+      case '-':
+        tok = this.newToken(TokenDef.MINUS, this.ch)
+        break
+      case '!':
+        if (this.peekChar() == '=') {
+          let ch = this.ch
+          this.readChar()
+          let literal = String(ch) + String(this.ch)
+          tok = this.newToken(TokenDef.NOT_EQ, literal)
+        } else {
+          tok = this.newToken(TokenDef.BANG, this.ch)
+        }
+        break
+      case '/':
+        tok = this.newToken(TokenDef.SLASH, this.ch)
+        break
+      case '*':
+        tok = this.newToken(TokenDef.ASTERISK, this.ch)
+        break
+      case '<':
+        tok = this.newToken(TokenDef.LT, this.ch)
+        break
+      case '>':
+        tok = this.newToken(TokenDef.GT, this.ch)
         break
       case '{':
         tok = this.newToken(TokenDef.LBRACE, this.ch)

@@ -10,6 +10,17 @@ let add = fn(x, y) {
 };
 
 let result = add(five, ten);
+!-/*5;
+5 < 10 > 5;
+
+if (5 < 10) {
+  return true;
+} else {
+  return false;
+}
+
+10 == 10;
+10 != 9;
 `
 
 const tests: { [expectedType: string]: string }[] = [
@@ -48,6 +59,43 @@ const tests: { [expectedType: string]: string }[] = [
   { [TokenDef.COMMA]: ',' },
   { [TokenDef.IDENT]: 'ten' },
   { [TokenDef.RPAREN]: ')' },
+  { [TokenDef.SEMICOLON]: ';' },
+  { [TokenDef.BANG]: '!' },
+  { [TokenDef.MINUS]: '-' },
+  { [TokenDef.SLASH]: '/' },
+  { [TokenDef.ASTERISK]: '*' },
+  { [TokenDef.INT]: '5' },
+  { [TokenDef.SEMICOLON]: ';' },
+  { [TokenDef.INT]: '5' },
+  { [TokenDef.LT]: '<' },
+  { [TokenDef.INT]: '10' },
+  { [TokenDef.GT]: '>' },
+  { [TokenDef.INT]: '5' },
+  { [TokenDef.SEMICOLON]: ';' },
+  { [TokenDef.IF]: 'if' },
+  { [TokenDef.LPAREN]: '(' },
+  { [TokenDef.INT]: '5' },
+  { [TokenDef.LT]: '<' },
+  { [TokenDef.INT]: '10' },
+  { [TokenDef.RPAREN]: ')' },
+  { [TokenDef.LBRACE]: '{' },
+  { [TokenDef.RETURN]: 'return' },
+  { [TokenDef.TRUE]: 'true' },
+  { [TokenDef.SEMICOLON]: ';' },
+  { [TokenDef.RBRACE]: '}' },
+  { [TokenDef.ELSE]: 'else' },
+  { [TokenDef.LBRACE]: '{' },
+  { [TokenDef.RETURN]: 'return' },
+  { [TokenDef.FALSE]: 'false' },
+  { [TokenDef.SEMICOLON]: ';' },
+  { [TokenDef.RBRACE]: '}' },
+  { [TokenDef.INT]: '10' },
+  { [TokenDef.EQ]: '==' },
+  { [TokenDef.INT]: '10' },
+  { [TokenDef.SEMICOLON]: ';' },
+  { [TokenDef.INT]: '10' },
+  { [TokenDef.NOT_EQ]: '!=' },
+  { [TokenDef.INT]: '9' },
   { [TokenDef.SEMICOLON]: ';' },
 ]
 
