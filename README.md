@@ -1,0 +1,8 @@
+```
+$ git clone https://github.com/wafuwafu13/Interpreter-made-in-TypeScript.git
+$ cd Interpreter-made-in-TypeScript.git
+$ npm i
+$ npm run build
+$ cd dist
+$ node bundle.js
+```
