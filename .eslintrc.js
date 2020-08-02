@@ -19,4 +19,4 @@ module.exports = {
     '@typescript-eslint/no-unnecessary-type-assertion': 'error',
     'no-constant-condition': 'off',
   },
-}
+};

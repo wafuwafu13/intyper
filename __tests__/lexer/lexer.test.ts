@@ -1,5 +1,5 @@
-import { TokenDef } from '../../src/token/token'
-import { Lexer } from '../../src/lexer/lexer'
+import { TokenDef } from '../../src/token/token';
+import { Lexer } from '../../src/lexer/lexer';
 
 const input: string = `let five = 5;
 
@@ -21,7 +21,7 @@ if (5 < 10) {
 
 10 == 10;
 10 != 9;
-`
+`;
 
 const tests: { [expectedType: string]: string }[] = [
   { [TokenDef.LET]: 'let' },
@@ -98,14 +98,14 @@ const tests: { [expectedType: string]: string }[] = [
   { [TokenDef.INT]: '9' },
   { [TokenDef.SEMICOLON]: ';' },
   { [TokenDef.EOF]: '' },
-]
+];
 
-let l = new Lexer(input)
+let l = new Lexer(input);
 
 it('NextToken', () => {
   for (let expectedType in tests) {
-    let tok = l.NextToken()
-    expect(tok.type).toBe(Object.keys(tests[expectedType])[0])
-    expect(tok.literal).toBe(Object.values(tests[expectedType])[0])
+    let tok = l.NextToken();
+    expect(tok.type).toBe(Object.keys(tests[expectedType])[0]);
+    expect(tok.literal).toBe(Object.values(tests[expectedType])[0]);
   }
-})
+});

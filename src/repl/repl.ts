@@ -1,14 +1,14 @@
-import { Lexer } from '../lexer/lexer'
-import { TokenDef } from '../token/token'
+import { Lexer } from '../lexer/lexer';
+import { TokenDef } from '../token/token';
 
 export const Start = () => {
-  let input = 'let add = fn(x, y) { x + y; };'
-  let l = new Lexer(input)
+  let input = 'let add = fn(x, y) { x + y; };';
+  let l = new Lexer(input);
   while (true) {
-    let tok = l.NextToken()
+    let tok = l.NextToken();
     if (tok.type == TokenDef.EOF) {
-      break
+      break;
     }
-    console.log(tok)
+    console.log(tok);
   }
-}
+};
