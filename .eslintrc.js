@@ -17,5 +17,6 @@ module.exports = {
     'no-console': 'off',
     '@typescript-eslint/adjacent-overload-signatures': 'warn',
     '@typescript-eslint/no-unnecessary-type-assertion': 'error',
+    'no-constant-condition': 'off',
   },
 }

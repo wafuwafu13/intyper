@@ -22,7 +22,7 @@ export class Lexer {
 
   readChar(): void {
     if (this.readPosition >= this.input.length) {
-      this.ch = 0
+      this.ch = 'EOF'
     } else {
       this.ch = this.input[this.readPosition]
     }
@@ -151,7 +151,7 @@ export class Lexer {
       case '}':
         tok = this.newToken(TokenDef.RBRACE, this.ch)
         break
-      case 0:
+      case 'EOF':
         tok = this.newToken(TokenDef.EOF, '')
         break
       default:

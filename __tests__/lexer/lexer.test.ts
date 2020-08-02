@@ -97,6 +97,7 @@ const tests: { [expectedType: string]: string }[] = [
   { [TokenDef.NOT_EQ]: '!=' },
   { [TokenDef.INT]: '9' },
   { [TokenDef.SEMICOLON]: ';' },
+  { [TokenDef.EOF]: '' },
 ]
 
 let l = new Lexer(input)
