@@ -18,5 +18,6 @@ module.exports = {
     '@typescript-eslint/adjacent-overload-signatures': 'warn',
     '@typescript-eslint/no-unnecessary-type-assertion': 'error',
     'no-constant-condition': 'off',
+    'no-unused-vars': 'off',
   },
 };

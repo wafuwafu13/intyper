@@ -39,7 +39,7 @@ export class Lexer {
   }
 
   readIdentifier(): string {
-    let position = this.position;
+    const position = this.position;
     while (this.isLetter(this.ch)) {
       this.readChar();
     }
@@ -59,7 +59,7 @@ export class Lexer {
   }
 
   readNumber(): string {
-    let position = this.position;
+    const position = this.position;
     while (this.isDigit(this.ch)) {
       this.readChar();
     }
@@ -97,9 +97,9 @@ export class Lexer {
     switch (this.ch) {
       case '=':
         if (this.peekChar() == '=') {
-          let ch = this.ch;
+          const ch = this.ch;
           this.readChar();
-          let literal = String(ch) + String(this.ch);
+          const literal = String(ch) + String(this.ch);
           tok = this.newToken(TokenDef.EQ, literal);
         } else {
           tok = this.newToken(TokenDef.ASSIGN, this.ch);
@@ -125,9 +125,9 @@ export class Lexer {
         break;
       case '!':
         if (this.peekChar() == '=') {
-          let ch = this.ch;
+          const ch = this.ch;
           this.readChar();
-          let literal = String(ch) + String(this.ch);
+          const literal = String(ch) + String(this.ch);
           tok = this.newToken(TokenDef.NOT_EQ, literal);
         } else {
           tok = this.newToken(TokenDef.BANG, this.ch);
@@ -156,7 +156,7 @@ export class Lexer {
         break;
       default:
         if (this.isLetter(this.ch)) {
-          let literal: string = this.readIdentifier();
+          const literal: string = this.readIdentifier();
           tok = this.newToken(LookupIdent(literal), literal);
           return tok; // readIdentifierでreadCharが呼び出されreadPositionが進んでいる
         } else if (this.isDigit(this.ch)) {

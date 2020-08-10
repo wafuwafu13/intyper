@@ -17,12 +17,12 @@ export class Program {
 
   constructor(statements: LetStatement[] = []) {
     this.statements = statements;
-    this.tokenLiteralFC = this.tokenLiteral
+    this.tokenLiteralFC = this.tokenLiteral;
   }
 
   tokenLiteral(): string | number {
     if (this.statements.length > 0) {
-      return this.statements[0].token.literal
+      return this.statements[0].token.literal;
     } else {
       return '';
     }
@@ -32,12 +32,12 @@ export class Program {
 export class LetStatement {
   token: Token;
   name: Identifier;
-  value: any; // TODO
+  // value?: any;
 
-  constructor(token: Token, name: any = undefined, value: any = undefined) { // TODO
+  constructor(token: Token) {
     this.token = token;
     this.name = name;
-    this.value = value;
+    //this.value = value;
   }
 
   statementNode() {}
