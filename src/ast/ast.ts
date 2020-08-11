@@ -7,19 +7,16 @@ import { Token } from '../token/token';
 //     }
 // }
 
-export const statement = () => {
-  return [];
-};
-
 export class Program {
-  statements: LetStatement[];
+  statements: LetStatement[] | ReturnStatement[];
   tokenLiteralFC: () => string | number;
 
-  constructor(statements: LetStatement[] = []) {
+  constructor(statements: LetStatement[] | ReturnStatement[] = []) {
     this.statements = statements;
     this.tokenLiteralFC = this.tokenLiteral;
   }
 
+  // TODO
   tokenLiteral(): string | number {
     if (this.statements.length > 0) {
       return this.statements[0].token.literal;
@@ -42,7 +39,20 @@ export class LetStatement {
 
   statementNode() {}
 
-  tokenLiteral() {
+  tokenLiteral(): string | number {
+    return this.token.literal;
+  }
+}
+
+export class ReturnStatement {
+  token: Token;
+  // returnValue: any;
+
+  constructor(token: Token) {
+    this.token = token;
+  }
+
+  tokenLiteral(): string | number {
     return this.token.literal;
   }
 }

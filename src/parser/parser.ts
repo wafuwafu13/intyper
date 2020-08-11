@@ -1,6 +1,6 @@
 import { Lexer } from '../lexer/lexer';
 import { Token, TokenDef, TokenType } from '../token/token';
-import { Program, statement, LetStatement, Identifier } from '../ast/ast';
+import { Program, LetStatement, Identifier, ReturnStatement } from '../ast/ast';
 
 export class Parser {
   l: Lexer;
@@ -30,14 +30,14 @@ export class Parser {
 
   parseProgram(): Program | null {
     const program = new Program();
-    program.statements = statement(); // [] Why to do
+    program.statements = [];
 
     if (this.curToken == undefined) {
       return null;
     }
 
     while (this.curToken.type != TokenDef.EOF) {
-      const stmt: LetStatement | null = this.parseStatement();
+      const stmt: any = this.parseStatement();
       if (stmt != null) {
         program.statements.push(stmt);
       }
@@ -47,13 +47,15 @@ export class Parser {
     return program;
   }
 
-  parseStatement(): LetStatement | null {
+  parseStatement(): LetStatement | ReturnStatement | null {
     if (this.curToken == undefined) {
       return null;
     }
     switch (this.curToken.type) {
       case TokenDef.LET:
         return this.parseLetStatement();
+      case TokenDef.RETURN:
+        return this.parseReturnStatement();
       default:
         return null;
     }
@@ -74,6 +76,21 @@ export class Parser {
     if (!this.expectPeek(TokenDef.ASSIGN)) {
       return null;
     }
+
+    while (!this.curTokenIs(TokenDef.SEMICOLON)) {
+      this.nextToken();
+    }
+
+    return stmt;
+  }
+
+  parseReturnStatement(): ReturnStatement | null {
+    if (this.curToken == undefined) {
+      return null;
+    }
+    const stmt: ReturnStatement | null = new ReturnStatement(this.curToken);
+
+    this.nextToken();
 
     while (!this.curTokenIs(TokenDef.SEMICOLON)) {
       this.nextToken();
