@@ -88,6 +88,23 @@ export class PrefixExpression {
   }
 }
 
+export class InfixExpression {
+  token: Token;
+  left: Identifier;
+  operator: string | number;
+  right?: Identifier;
+
+  constructor(token: Token, operator: string | number, left: Identifier) {
+    this.token = token;
+    this.operator = operator;
+    this.left = left;
+  }
+
+  tokenLiteral(): string | number {
+    return this.token.literal;
+  }
+}
+
 export class Identifier {
   token: Token;
   value: string | number;
