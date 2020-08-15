@@ -13,12 +13,12 @@ import {
 } from '../ast/ast';
 
 const LOWEST = 1;
-const EQUALS = 2; // ==
-const LESSGREATER = 3; // > または <
-const SUM = 4; // +
-const PRODUCT = 5; // *
-const PREFIX = 6; // -X または !X
-// const CALL = 7 // myFunction(X)
+const EQUALS = 2;
+const LESSGREATER = 3;
+const SUM = 4;
+const PRODUCT = 5;
+const PREFIX = 6;
+// const CALL = 7
 
 const precedences: { [token: string]: number } = {
   [TokenDef.EQ]: EQUALS,
@@ -37,16 +37,25 @@ export class Parser {
   peekToken: Token;
   errors: string[];
 
-  prefixParseFns: any;
-  infixParseFns: any;
+  prefixParseFns: Map<
+    string,
+    (t: Token) => Identifier | IntegerLiteral | Boolean
+  >;
+  infixParseFns: Map<string, (t: Token, left: Identifier) => InfixExpression>;
 
   constructor(
     l: Lexer,
     curToken: Token = new Token(TokenDef.DEFAULT, 'DEFAULT'),
     peekToken: Token = new Token(TokenDef.DEFAULT, 'DEFAULT'),
     errors: string[] = [],
-    prefixParseFns: any = undefined,
-    infixParseFns: any = undefined,
+    prefixParseFns: Map<
+      string,
+      (t: Token) => Identifier | IntegerLiteral | Boolean
+    > = new Map<string, (t: Token) => Identifier | IntegerLiteral | Boolean>(),
+    infixParseFns: Map<
+      string,
+      (t: Token, left: Identifier) => InfixExpression
+    > = new Map<string, (t: Token, left: Identifier) => InfixExpression>(),
   ) {
     this.l = l;
     this.curToken = curToken;
@@ -58,7 +67,6 @@ export class Parser {
     this.nextToken();
     this.nextToken();
 
-    this.prefixParseFns = new Map();
     this.registerPrefix(TokenDef.IDENT, this.parseIdentifier);
     this.registerPrefix(TokenDef.INT, this.parseIntegerLiteral);
     this.registerPrefix(TokenDef.BANG, this.parsePrefixExpression);
@@ -66,7 +74,6 @@ export class Parser {
     this.registerPrefix(TokenDef.TRUE, this.parseBoolean);
     this.registerPrefix(TokenDef.FALSE, this.parseBoolean);
 
-    this.infixParseFns = new Map();
     this.registerInfix(TokenDef.PLUS, this.parseInfixExpression);
     this.registerInfix(TokenDef.MINUS, this.parseInfixExpression);
     this.registerInfix(TokenDef.SLASH, this.parseInfixExpression);
@@ -86,11 +93,14 @@ export class Parser {
     tokenType: TokenType,
     fn: (t: Token) => Identifier | IntegerLiteral | Boolean,
   ) {
-    this.prefixParseFns[tokenType] = fn;
+    this.prefixParseFns.set(tokenType, fn);
   }
 
-  registerInfix(tokenType: TokenType, fn: any) {
-    this.infixParseFns[tokenType] = fn;
+  registerInfix(
+    tokenType: TokenType,
+    fn: (t: Token, left: Identifier) => InfixExpression,
+  ) {
+    this.infixParseFns.set(tokenType, fn);
   }
 
   parseProgram(): Program {
@@ -174,7 +184,7 @@ export class Parser {
   }
 
   parseExpression(precedence: number) {
-    const prefix = this.prefixParseFns[this.curToken.type].bind(this); //  [Function: parseIdentifier]
+    const prefix: any = this.prefixParseFns.get(this.curToken.type)!.bind(this); //  [Function: parseIdentifier]
     if (prefix == null) {
       this.noPrefixParseFnError(this.curToken.type);
       return null;
@@ -186,7 +196,9 @@ export class Parser {
       !this.curTokenIs(TokenDef.SEMICOLON) &&
       precedence < this.peekPrecedence()
     ) {
-      const infix = this.infixParseFns[this.peekToken.type].bind(this);
+      const infix: any = this.infixParseFns
+        .get(this.peekToken.type)!
+        .bind(this);
       if (infix == null) {
         return leftExp;
       }
