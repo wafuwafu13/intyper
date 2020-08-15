@@ -11,14 +11,14 @@ export class Token {
 }
 
 export namespace TokenDef {
-  export const ILLEGAL = 'ILLEGAL'; // トークンが未知であることを表す
-  export const EOF = 'EOF'; // ファイルの終端を表し、構文解析器にここで停止してよいと伝える
+  export const DEFAULT = 'DEFAULT';
 
-  // 識別子 + リテラル
-  export const IDENT = 'IDENT'; // add, foobar, x, y, ...
-  export const INT = 'INT'; // 1232454
+  export const ILLEGAL = 'ILLEGAL';
+  export const EOF = 'EOF';
 
-  // 演算子
+  export const IDENT = 'IDENT';
+  export const INT = 'INT';
+
   export const ASSIGN = '=';
   export const PLUS = '+';
   export const MINUS = '-';
@@ -32,7 +32,6 @@ export namespace TokenDef {
   export const EQ = '==';
   export const NOT_EQ = '!=';
 
-  // デリミタ
   export const COMMA = ',';
   export const SEMICOLON = ';';
 
@@ -41,7 +40,6 @@ export namespace TokenDef {
   export const LBRACE = '{';
   export const RBRACE = '}';
 
-  // キーワード
   export const FUNCTION = 'FUNCTION';
   export const LET = 'LET';
   export const TRUE = 'TRUE';

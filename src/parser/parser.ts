@@ -33,8 +33,8 @@ const precedences: { [token: string]: number } = {
 
 export class Parser {
   l: Lexer;
-  curToken: Token | undefined;
-  peekToken: Token | undefined;
+  curToken: Token;
+  peekToken: Token;
   errors: string[];
 
   prefixParseFns: any;
@@ -42,8 +42,8 @@ export class Parser {
 
   constructor(
     l: Lexer,
-    curToken: Token | undefined = undefined,
-    peekToken: Token | undefined = undefined,
+    curToken: Token = new Token(TokenDef.DEFAULT, 'DEFAULT'),
+    peekToken: Token = new Token(TokenDef.DEFAULT, 'DEFAULT'),
     errors: string[] = [],
     prefixParseFns: any = undefined,
     infixParseFns: any = undefined,
@@ -93,12 +93,8 @@ export class Parser {
     this.infixParseFns[tokenType] = fn;
   }
 
-  parseProgram(): Program | null {
+  parseProgram(): Program {
     const program = new Program();
-
-    if (this.curToken == undefined) {
-      return null;
-    }
 
     while (this.curToken.type != TokenDef.EOF) {
       const stmt: any = this.parseStatement();
@@ -116,9 +112,6 @@ export class Parser {
     | ReturnStatement
     | ExpressionStatement
     | null {
-    if (this.curToken == undefined) {
-      return null;
-    }
     switch (this.curToken.type) {
       case TokenDef.LET:
         return this.parseLetStatement();
@@ -130,9 +123,6 @@ export class Parser {
   }
 
   parseLetStatement(): LetStatement | null {
-    if (this.curToken == undefined) {
-      return null;
-    }
     const stmt: LetStatement | null = new LetStatement(this.curToken);
 
     if (!this.expectPeek(TokenDef.IDENT)) {
@@ -153,9 +143,6 @@ export class Parser {
   }
 
   parseReturnStatement(): ReturnStatement | null {
-    if (this.curToken == undefined) {
-      return null;
-    }
     const stmt: ReturnStatement | null = new ReturnStatement(this.curToken);
 
     this.nextToken();
@@ -168,9 +155,6 @@ export class Parser {
   }
 
   parseExpressionStatement(): ExpressionStatement | null {
-    if (this.curToken == undefined) {
-      return null;
-    }
     const stmt: ExpressionStatement | null = new ExpressionStatement(
       this.curToken,
     );
@@ -190,9 +174,6 @@ export class Parser {
   }
 
   parseExpression(precedence: number) {
-    if (this.curToken == undefined) {
-      return null;
-    }
     const prefix = this.prefixParseFns[this.curToken.type].bind(this); //  [Function: parseIdentifier]
     if (prefix == null) {
       this.noPrefixParseFnError(this.curToken.type);
@@ -200,10 +181,6 @@ export class Parser {
     }
 
     let leftExp = prefix(this.curToken);
-
-    if (this.peekToken == undefined) {
-      return null;
-    }
 
     while (
       !this.curTokenIs(TokenDef.SEMICOLON) &&
@@ -260,34 +237,22 @@ export class Parser {
   }
 
   peekPrecedence(): number {
-    if (this.peekToken == undefined) {
-      return LOWEST;
-    }
     const precedence = precedences[this.peekToken.type];
 
     return precedence || LOWEST;
   }
 
   curPrecedence(): number {
-    if (this.curToken == undefined) {
-      return LOWEST;
-    }
     const precedence = precedences[this.curToken.type];
 
     return precedence || LOWEST;
   }
 
   curTokenIs(t: TokenType): boolean {
-    if (this.curToken == undefined) {
-      return false;
-    }
     return this.curToken.type == t;
   }
 
   peekTokenIs(t: TokenType): boolean {
-    if (this.peekToken == undefined) {
-      return false;
-    }
     return this.peekToken.type == t;
   }
 
@@ -305,10 +270,7 @@ export class Parser {
     return this.errors;
   }
 
-  peekError(t: TokenType): void | null {
-    if (this.peekToken == undefined) {
-      return null;
-    }
+  peekError(t: TokenType): void {
     const msg: string =
       'expected next token to be ' +
       t +
