@@ -171,3 +171,48 @@ describe('testIntegerLiteralExpression', () => {
     expect(literal.tokenLiteral()).toBe('5');
   });
 });
+
+describe('testParsingPrefixExpressions', () => {
+  const prefixTests = [
+    { input: "!5", operator: "!", integerValue: 5},
+    { input: "-15", operator: "-", integerValue: 15},
+  ]
+
+  for (const test of prefixTests) {
+
+    const l = new Lexer(test['input']);
+    const p = new Parser(l);
+
+    const program = p.parseProgram();
+
+    it('checkParserErrros', () => {
+      const errors = p.Errors();
+      if (errors.length != 0) {
+        for (let i = 0; i < errors.length; i++) {
+          console.log('parser error: %s', errors[i]);
+        }
+      }
+      expect(errors.length).toBe(0);
+    });
+
+    it('parseProgram', () => {
+      expect(program).not.toBe(null);
+      if (program == null) {
+        return;
+      }
+      expect(program.statements.length).toBe(1);
+    });
+
+    if (program == null) {
+      return;
+    }
+
+    const exp: any = program.statements[0];
+
+    it('expressionStatement', () => {
+      expect(exp.expression.operator).toBe(test['operator']);
+      expect(exp.expression.right.value).toBe(test['integerValue']);
+      expect(exp.expression.right.tokenLiteral()).toBe(String(test['integerValue']));
+    });
+  }
+})

@@ -73,6 +73,21 @@ export class ExpressionStatement {
   }
 }
 
+export class PrefixExpression {
+  token: Token;
+  operator: string | number;
+  right?: Identifier;
+
+  constructor(token: Token, operator: string | number) {
+    this.token = token;
+    this.operator = operator;
+  }
+
+  tokenLiteral(): string | number {
+    return this.token.literal;
+  }
+}
+
 export class Identifier {
   token: Token;
   value: string | number;

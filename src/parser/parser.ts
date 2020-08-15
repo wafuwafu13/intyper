@@ -7,6 +7,7 @@ import {
   ReturnStatement,
   ExpressionStatement,
   IntegerLiteral,
+  PrefixExpression,
 } from '../ast/ast';
 
 const LOWEST = 1;
@@ -14,7 +15,7 @@ const LOWEST = 1;
 // const LESSGREATER = 3// > または <
 // const SUM = 4        // +
 // const PRODUCT = 5    // *
-// const PREFIX = 6    // -X または !X
+const PREFIX = 6  // -X または !X
 // const CALL = 7       // myFunction(X)
 
 export class Parser {
@@ -47,6 +48,8 @@ export class Parser {
     this.prefixParseFns = new Map();
     this.registerPrefix(TokenDef.IDENT, this.parseIdentifier);
     this.registerPrefix(TokenDef.INT, this.parseIntegerLiteral);
+    this.registerPrefix(TokenDef.BANG, this.parsePrefixExpression);
+    this.registerPrefix(TokenDef.MINUS, this.parsePrefixExpression);
   }
 
   nextToken(): void {
@@ -156,12 +159,18 @@ export class Parser {
     return stmt;
   }
 
+  noPrefixParseFnError(t: TokenType) {
+    const msg = "no prefix parse function for " + t + " found";
+    this.errors.push(msg);
+  }
+
   parseExpression(precedence: number) {
     if (this.curToken == undefined) {
       return null;
     }
-    const prefix = this.prefixParseFns[this.curToken.type]; //  [Function: parseIdentifier]
+    const prefix = this.prefixParseFns[this.curToken.type].bind(this); //  [Function: parseIdentifier]
     if (prefix == null) {
+      this.noPrefixParseFnError(this.curToken.type);
       return null;
     }
     console.log(precedence);
@@ -180,6 +189,16 @@ export class Parser {
     lit.value = value;
 
     return lit;
+  }
+
+  parsePrefixExpression(curToken: Token): PrefixExpression {
+    const expression = new PrefixExpression(curToken, curToken.literal);
+
+    this.nextToken();
+
+    expression.right = this.parseExpression(PREFIX);
+
+    return expression;
   }
 
   curTokenIs(t: TokenType): boolean {
