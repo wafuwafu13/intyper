@@ -8,28 +8,30 @@ import { Token } from '../token/token';
 // }
 
 export class Program {
-  statements: LetStatement[] | ReturnStatement[];
-  tokenLiteralFC: () => string | number;
+  statements: LetStatement[] | ReturnStatement[] | ExpressionStatement[];
+  // tokenLiteralFC: () => string | number;
 
-  constructor(statements: LetStatement[] | ReturnStatement[] = []) {
+  constructor(
+    statements: LetStatement[] | ReturnStatement[] | ExpressionStatement[] = [],
+  ) {
     this.statements = statements;
-    this.tokenLiteralFC = this.tokenLiteral;
+    // this.tokenLiteralFC = this.tokenLiteral;
   }
 
   // TODO
-  tokenLiteral(): string | number {
-    if (this.statements.length > 0) {
-      return this.statements[0].token.literal;
-    } else {
-      return '';
-    }
-  }
+  // tokenLiteral(): string | number {
+  //   if (this.statements.length > 0) {
+  //     return this.statements[0].token.literal;
+  //   } else {
+  //     return '';
+  //   }
+  // }
 }
 
 export class LetStatement {
   token: Token;
   name: Identifier;
-  // value?: any;
+  value?: any;
 
   constructor(token: Token) {
     this.token = token;
@@ -46,7 +48,21 @@ export class LetStatement {
 
 export class ReturnStatement {
   token: Token;
-  // returnValue: any;
+  value?: any;
+
+  constructor(token: Token) {
+    this.token = token;
+  }
+
+  tokenLiteral(): string | number {
+    return this.token.literal;
+  }
+}
+
+export class ExpressionStatement {
+  token: Token;
+  expression?: Identifier;
+  value?: any;
 
   constructor(token: Token) {
     this.token = token;

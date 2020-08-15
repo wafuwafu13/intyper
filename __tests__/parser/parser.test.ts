@@ -95,3 +95,41 @@ return 993322;
     });
   }
 });
+
+describe('testIdentifierExpression', () => {
+  const input = 'foobar;';
+
+  const l = new Lexer(input);
+  const p = new Parser(l);
+
+  const program = p.parseProgram();
+
+  it('checkParserErrros', () => {
+    const errors = p.Errors();
+    if (errors.length != 0) {
+      for (let i = 0; i < errors.length; i++) {
+        console.log('parser error: %s', errors[i]);
+      }
+    }
+    expect(errors.length).toBe(0);
+  });
+
+  it('parseProgram', () => {
+    expect(program).not.toBe(null);
+    if (program == null) {
+      return;
+    }
+    expect(program.statements.length).toBe(1);
+  });
+
+  if (program == null) {
+    return;
+  }
+
+  const ident: any = program.statements[0];
+
+  it('expressionIdentifier', () => {
+    expect(ident.expression.value).toBe('foobar');
+    expect(ident.tokenLiteral()).toBe('foobar');
+  });
+});
