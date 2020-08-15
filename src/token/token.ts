@@ -1,10 +1,15 @@
 export type TokenType = string;
 
-export class Token {
+export interface TokenProps {
   type: TokenType;
   literal: string | number;
+}
 
-  constructor(type: TokenType, literal: string | number) {
+export class Token<T extends TokenProps> {
+  type: T['type'];
+  literal: T['literal'];
+
+  constructor(type: T['type'], literal: T['literal']) {
     this.type = type;
     this.literal = literal;
   }

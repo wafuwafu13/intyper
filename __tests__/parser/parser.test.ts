@@ -1,6 +1,13 @@
 import { Lexer } from '../../src/lexer/lexer';
 import { Parser } from '../../src/parser/parser';
-import { Program, LetStatement, ReturnStatement } from '../../src/ast/ast';
+import {
+  Program,
+  LetStatement,
+  ReturnStatement,
+  ProgramProps,
+  LetStatementProps,
+  ReturnStatementProps,
+} from '../../src/ast/ast';
 
 describe('testLetStatement', () => {
   const input = `
@@ -12,7 +19,7 @@ let foobar = 838383;
   const l = new Lexer(input);
   const p = new Parser(l);
 
-  const program: Program | null = p.parseProgram();
+  const program: Program<ProgramProps> | null = p.parseProgram();
 
   it('checkParserErrros', () => {
     const errors = p.Errors();
@@ -40,7 +47,10 @@ let foobar = 838383;
         return;
       }
       // TODO
-      const stmt: LetStatement | ReturnStatement | any = program.statements[i];
+      const stmt:
+        | LetStatement<LetStatementProps>
+        | ReturnStatement<ReturnStatementProps>
+        | any = program.statements[i];
       if (stmt.name == undefined) {
         return;
       }
@@ -61,7 +71,7 @@ return 993322;
   const l = new Lexer(input);
   const p = new Parser(l);
 
-  const program: Program | null = p.parseProgram();
+  const program: Program<ProgramProps> | null = p.parseProgram();
 
   it('checkParserErrros', () => {
     const errors = p.Errors();
@@ -90,7 +100,7 @@ return 993322;
       if (program == null) {
         return;
       }
-      const stmt: ReturnStatement = program.statements[i];
+      const stmt: ReturnStatement<ReturnStatementProps> = program.statements[i];
       expect(stmt.tokenLiteral()).toBe('return');
     });
   }

@@ -1,5 +1,5 @@
-import { Lexer } from '../lexer/lexer';
-import { Token, TokenDef, TokenType } from '../token/token';
+import { Lexer, LexerProps } from '../lexer/lexer';
+import { Token, TokenDef, TokenType, TokenProps } from '../token/token';
 import {
   Program,
   LetStatement,
@@ -10,6 +10,15 @@ import {
   PrefixExpression,
   InfixExpression,
   Boolean,
+  ProgramProps,
+  LetStatementProps,
+  ReturnStatementProps,
+  ExpressionStatementProps,
+  PrefixExpressionProps,
+  InfixExpressionProps,
+  IdentifierProps,
+  IntegerLiteralProps,
+  BooleanProps,
 } from '../ast/ast';
 
 const LOWEST = 1;
@@ -31,31 +40,60 @@ const precedences: { [token: string]: number } = {
   [TokenDef.ASTERISK]: PRODUCT,
 };
 
-export class Parser {
-  l: Lexer;
-  curToken: Token;
-  peekToken: Token;
+interface ParserProps {
+  l: Lexer<LexerProps>;
+  curToken: Token<TokenProps>;
+  peekToken: Token<TokenProps>;
   errors: string[];
 
   prefixParseFns: Map<
     string,
-    (t: Token) => Identifier | IntegerLiteral | Boolean
+    (
+      t: Token<TokenProps>,
+    ) =>
+      | Identifier<IdentifierProps>
+      | IntegerLiteral<IntegerLiteralProps>
+      | Boolean<BooleanProps>
   >;
-  infixParseFns: Map<string, (t: Token, left: Identifier) => InfixExpression>;
+  infixParseFns: Map<
+    string,
+    (
+      t: Token<TokenProps>,
+      left: Identifier<IdentifierProps>,
+    ) => InfixExpression<InfixExpressionProps>
+  >;
+}
+
+export class Parser<T extends ParserProps> {
+  l: T['l'];
+  curToken: T['curToken'];
+  peekToken: T['peekToken'];
+  errors: T['errors'] = [];
+
+  prefixParseFns: T['prefixParseFns'];
+  infixParseFns: T['infixParseFns'];
 
   constructor(
-    l: Lexer,
-    curToken: Token = new Token(TokenDef.DEFAULT, 'DEFAULT'),
-    peekToken: Token = new Token(TokenDef.DEFAULT, 'DEFAULT'),
-    errors: string[] = [],
-    prefixParseFns: Map<
+    l: T['l'],
+    curToken: T['curToken'] = new Token(TokenDef.DEFAULT, 'DEFAULT'),
+    peekToken: T['peekToken'] = new Token(TokenDef.DEFAULT, 'DEFAULT'),
+    errors: T['errors'] = [],
+    prefixParseFns: T['prefixParseFns'] = new Map<
       string,
-      (t: Token) => Identifier | IntegerLiteral | Boolean
-    > = new Map<string, (t: Token) => Identifier | IntegerLiteral | Boolean>(),
-    infixParseFns: Map<
+      (
+        t: Token<TokenProps>,
+      ) =>
+        | Identifier<IdentifierProps>
+        | IntegerLiteral<IntegerLiteralProps>
+        | Boolean<BooleanProps>
+    >(),
+    infixParseFns: T['infixParseFns'] = new Map<
       string,
-      (t: Token, left: Identifier) => InfixExpression
-    > = new Map<string, (t: Token, left: Identifier) => InfixExpression>(),
+      (
+        t: Token<TokenProps>,
+        left: Identifier<IdentifierProps>,
+      ) => InfixExpression<InfixExpressionProps>
+    >(),
   ) {
     this.l = l;
     this.curToken = curToken;
@@ -91,19 +129,27 @@ export class Parser {
 
   registerPrefix(
     tokenType: TokenType,
-    fn: (t: Token) => Identifier | IntegerLiteral | Boolean,
+    fn: (
+      t: Token<TokenProps>,
+    ) =>
+      | Identifier<IdentifierProps>
+      | IntegerLiteral<IntegerLiteralProps>
+      | Boolean<BooleanProps>,
   ) {
     this.prefixParseFns.set(tokenType, fn);
   }
 
   registerInfix(
     tokenType: TokenType,
-    fn: (t: Token, left: Identifier) => InfixExpression,
+    fn: (
+      t: Token<TokenProps>,
+      left: Identifier<IdentifierProps>,
+    ) => InfixExpression<InfixExpressionProps>,
   ) {
     this.infixParseFns.set(tokenType, fn);
   }
 
-  parseProgram(): Program {
+  parseProgram(): Program<ProgramProps> {
     const program = new Program();
 
     while (this.curToken.type != TokenDef.EOF) {
@@ -118,9 +164,9 @@ export class Parser {
   }
 
   parseStatement():
-    | LetStatement
-    | ReturnStatement
-    | ExpressionStatement
+    | LetStatement<LetStatementProps>
+    | ReturnStatement<ReturnStatementProps>
+    | ExpressionStatement<ExpressionStatementProps>
     | null {
     switch (this.curToken.type) {
       case TokenDef.LET:
@@ -132,8 +178,10 @@ export class Parser {
     }
   }
 
-  parseLetStatement(): LetStatement | null {
-    const stmt: LetStatement | null = new LetStatement(this.curToken);
+  parseLetStatement(): LetStatement<LetStatementProps> | null {
+    const stmt: LetStatement<LetStatementProps> | null = new LetStatement(
+      this.curToken,
+    );
 
     if (!this.expectPeek(TokenDef.IDENT)) {
       return null;
@@ -152,8 +200,10 @@ export class Parser {
     return stmt;
   }
 
-  parseReturnStatement(): ReturnStatement | null {
-    const stmt: ReturnStatement | null = new ReturnStatement(this.curToken);
+  parseReturnStatement(): ReturnStatement<ReturnStatementProps> | null {
+    const stmt: ReturnStatement<
+      ReturnStatementProps
+    > | null = new ReturnStatement(this.curToken);
 
     this.nextToken();
 
@@ -164,10 +214,12 @@ export class Parser {
     return stmt;
   }
 
-  parseExpressionStatement(): ExpressionStatement | null {
-    const stmt: ExpressionStatement | null = new ExpressionStatement(
-      this.curToken,
-    );
+  parseExpressionStatement(): ExpressionStatement<
+    ExpressionStatementProps
+  > | null {
+    const stmt: ExpressionStatement<
+      ExpressionStatementProps
+    > | null = new ExpressionStatement(this.curToken);
 
     stmt.expression = this.parseExpression(LOWEST);
 
@@ -211,11 +263,13 @@ export class Parser {
     return leftExp;
   }
 
-  parseIdentifier(curToken: Token): Identifier {
+  parseIdentifier(curToken: Token<TokenProps>): Identifier<IdentifierProps> {
     return new Identifier(curToken, curToken.literal);
   }
 
-  parseIntegerLiteral(curToken: Token): IntegerLiteral {
+  parseIntegerLiteral(
+    curToken: Token<TokenProps>,
+  ): IntegerLiteral<IntegerLiteralProps> {
     const lit = new IntegerLiteral(curToken);
     const value = Number(curToken.literal);
     lit.value = value;
@@ -223,7 +277,9 @@ export class Parser {
     return lit;
   }
 
-  parsePrefixExpression(curToken: Token): PrefixExpression {
+  parsePrefixExpression(
+    curToken: Token<TokenProps>,
+  ): PrefixExpression<PrefixExpressionProps> {
     const expression = new PrefixExpression(curToken, curToken.literal);
 
     this.nextToken();
@@ -233,7 +289,10 @@ export class Parser {
     return expression;
   }
 
-  parseInfixExpression(curToken: Token, left: Identifier): InfixExpression {
+  parseInfixExpression(
+    curToken: Token<TokenProps>,
+    left: Identifier<IdentifierProps>,
+  ): InfixExpression<InfixExpressionProps> {
     const expression = new InfixExpression(curToken, curToken.literal, left);
     const precedence = this.curPrecedence();
 
@@ -244,7 +303,7 @@ export class Parser {
     return expression;
   }
 
-  parseBoolean(curToken: Token) {
+  parseBoolean(curToken: Token<TokenProps>) {
     return new Boolean(curToken, this.curTokenIs(TokenDef.TRUE));
   }
 

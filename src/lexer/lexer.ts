@@ -1,16 +1,28 @@
-import { TokenDef, Token, LookupIdent } from '../../src/token/token';
+import {
+  TokenDef,
+  Token,
+  TokenProps,
+  LookupIdent,
+} from '../../src/token/token';
 
-export class Lexer {
+export interface LexerProps {
   input: string;
   position: number;
   readPosition: number;
   ch: string | number;
+}
+
+export class Lexer<T extends LexerProps> {
+  input: T['input'];
+  position: T['position'];
+  readPosition: T['readPosition'];
+  ch: T['ch'];
 
   constructor(
-    input: string,
-    position: number = 0,
-    readPosition: number = 0,
-    ch: string | number = '',
+    input: T['input'],
+    position: T['position'] = 0,
+    readPosition: T['readPosition'] = 0,
+    ch: T['ch'] = '',
   ) {
     this.input = input;
     this.position = position;
@@ -89,8 +101,8 @@ export class Lexer {
     }
   }
 
-  NextToken(): Token {
-    let tok: Token;
+  NextToken(): Token<TokenProps> {
+    let tok: Token<TokenProps>;
 
     this.skipWhitespace();
 

@@ -1,42 +1,34 @@
-import { Token } from '../token/token';
+import { Token, TokenProps } from '../token/token';
 
-// TODO
-// class Node {
-//     tokenLiteral(statement) {
-//         return statement.Token.Literal
-//     }
-// }
-
-export class Program {
-  statements: LetStatement[] | ReturnStatement[] | ExpressionStatement[];
-  // tokenLiteralFC: () => string | number;
-
-  constructor(
-    statements: LetStatement[] | ReturnStatement[] | ExpressionStatement[] = [],
-  ) {
-    this.statements = statements;
-    // this.tokenLiteralFC = this.tokenLiteral;
-  }
-
-  // TODO
-  // tokenLiteral(): string | number {
-  //   if (this.statements.length > 0) {
-  //     return this.statements[0].token.literal;
-  //   } else {
-  //     return '';
-  //   }
-  // }
+export interface ProgramProps {
+  statements:
+    | LetStatement<LetStatementProps>[]
+    | ReturnStatement<ReturnStatementProps>[]
+    | ExpressionStatement<ExpressionStatementProps>[];
 }
 
-export class LetStatement {
-  token: Token;
-  name: Identifier;
-  value?: any;
+export class Program<T extends ProgramProps> {
+  statements: T['statements'];
 
-  constructor(token: Token) {
+  constructor(statements: T['statements'] = []) {
+    this.statements = statements;
+  }
+}
+
+export interface LetStatementProps {
+  token: Token<TokenProps>;
+  name: Identifier<IdentifierProps>;
+  value?: any;
+}
+
+export class LetStatement<T extends LetStatementProps> {
+  token: T['token'];
+  name: T['name'];
+  value?: T['value'];
+
+  constructor(token: T['token']) {
     this.token = token;
     this.name = name;
-    //this.value = value;
   }
 
   statementNode() {}
@@ -46,11 +38,16 @@ export class LetStatement {
   }
 }
 
-export class ReturnStatement {
-  token: Token;
+export interface ReturnStatementProps {
+  token: Token<TokenProps>;
   value?: any;
+}
 
-  constructor(token: Token) {
+export class ReturnStatement<T extends ReturnStatementProps> {
+  token: T['token'];
+  value?: T['value'];
+
+  constructor(token: T['token']) {
     this.token = token;
   }
 
@@ -59,12 +56,18 @@ export class ReturnStatement {
   }
 }
 
-export class ExpressionStatement {
-  token: Token;
-  expression?: Identifier;
+export interface ExpressionStatementProps {
+  token: Token<TokenProps>;
+  expression?: Identifier<IdentifierProps>;
   value?: any;
+}
 
-  constructor(token: Token) {
+export class ExpressionStatement<T extends ExpressionStatementProps> {
+  token: T['token'];
+  expression?: T['expression'];
+  value?: T['value'];
+
+  constructor(token: T['token']) {
     this.token = token;
   }
 
@@ -73,12 +76,18 @@ export class ExpressionStatement {
   }
 }
 
-export class PrefixExpression {
-  token: Token;
+export interface PrefixExpressionProps {
+  token: Token<TokenProps>;
   operator: string | number;
-  right?: Identifier;
+  right?: Identifier<IdentifierProps>;
+}
 
-  constructor(token: Token, operator: string | number) {
+export class PrefixExpression<T extends PrefixExpressionProps> {
+  token: T['token'];
+  operator: T['operator'];
+  right?: T['right'];
+
+  constructor(token: T['token'], operator: T['operator']) {
     this.token = token;
     this.operator = operator;
   }
@@ -88,13 +97,21 @@ export class PrefixExpression {
   }
 }
 
-export class InfixExpression {
-  token: Token;
-  left: Identifier;
+export interface InfixExpressionProps {
+  token: Token<TokenProps>;
   operator: string | number;
-  right?: Identifier;
+  left: Identifier<IdentifierProps>;
 
-  constructor(token: Token, operator: string | number, left: Identifier) {
+  right?: Identifier<IdentifierProps>;
+}
+
+export class InfixExpression<T extends InfixExpressionProps> {
+  token: T['token'];
+  operator: T['operator'];
+  left: T['left'];
+  right?: Identifier<IdentifierProps>;
+
+  constructor(token: T['token'], operator: T['operator'], left: T['left']) {
     this.token = token;
     this.operator = operator;
     this.left = left;
@@ -105,11 +122,16 @@ export class InfixExpression {
   }
 }
 
-export class Identifier {
-  token: Token;
+export interface IdentifierProps {
+  token: Token<TokenProps>;
   value: string | number;
+}
 
-  constructor(token: Token, value: string | number) {
+export class Identifier<T extends IdentifierProps> {
+  token: T['token'];
+  value: T['value'];
+
+  constructor(token: T['token'], value: T['value']) {
     this.token = token;
     this.value = value;
   }
@@ -121,11 +143,16 @@ export class Identifier {
   }
 }
 
-export class IntegerLiteral {
-  token: Token;
+export interface IntegerLiteralProps {
+  token: Token<TokenProps>;
   value?: number;
+}
 
-  constructor(token: Token) {
+export class IntegerLiteral<T extends IntegerLiteralProps> {
+  token: T['token'];
+  value?: T['value'];
+
+  constructor(token: T['token']) {
     this.token = token;
   }
 
@@ -134,11 +161,16 @@ export class IntegerLiteral {
   }
 }
 
-export class Boolean {
-  token: Token;
+export interface BooleanProps {
+  token: Token<TokenProps>;
   value: boolean;
+}
 
-  constructor(token: Token, value: boolean) {
+export class Boolean<T extends BooleanProps> {
+  token: T['token'];
+  value: T['value'];
+
+  constructor(token: T['token'], value: T['value']) {
     this.token = token;
     this.value = value;
   }
