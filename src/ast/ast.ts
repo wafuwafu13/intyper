@@ -133,3 +133,17 @@ export class IntegerLiteral {
     return this.token.literal;
   }
 }
+
+export class Boolean {
+  token: Token;
+  value: boolean;
+
+  constructor(token: Token, value: boolean) {
+    this.token = token;
+    this.value = value;
+  }
+
+  tokenLiteral(): string | number {
+    return this.token.literal;
+  }
+}

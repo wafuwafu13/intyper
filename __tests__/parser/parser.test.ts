@@ -267,3 +267,45 @@ describe('testParsingInfixExpressions', () => {
     });
   }
 });
+
+describe('testBooleanExpression', () => {
+  const tests = [
+    { input: 'true;', expectedBoolean: true },
+    { input: 'false;', expectedBoolean: false },
+  ];
+
+  for (const test of tests) {
+    const l = new Lexer(test['input']);
+    const p = new Parser(l);
+
+    const program = p.parseProgram();
+
+    it('checkParserErrros', () => {
+      const errors = p.Errors();
+      if (errors.length != 0) {
+        for (let i = 0; i < errors.length; i++) {
+          console.log('parser error: %s', errors[i]);
+        }
+      }
+      expect(errors.length).toBe(0);
+    });
+
+    it('parseProgram', () => {
+      expect(program).not.toBe(null);
+      if (program == null) {
+        return;
+      }
+      expect(program.statements.length).toBe(1);
+    });
+
+    if (program == null) {
+      return;
+    }
+
+    const boolean: any = program.statements[0];
+
+    it('booleanStatement', () => {
+      expect(boolean.expression.value).toBe(test['expectedBoolean']);
+    });
+  }
+});

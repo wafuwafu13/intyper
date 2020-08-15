@@ -9,6 +9,7 @@ import {
   IntegerLiteral,
   PrefixExpression,
   InfixExpression,
+  Boolean,
 } from '../ast/ast';
 
 const LOWEST = 1;
@@ -62,6 +63,8 @@ export class Parser {
     this.registerPrefix(TokenDef.INT, this.parseIntegerLiteral);
     this.registerPrefix(TokenDef.BANG, this.parsePrefixExpression);
     this.registerPrefix(TokenDef.MINUS, this.parsePrefixExpression);
+    this.registerPrefix(TokenDef.TRUE, this.parseBoolean);
+    this.registerPrefix(TokenDef.FALSE, this.parseBoolean);
 
     this.infixParseFns = new Map();
     this.registerInfix(TokenDef.PLUS, this.parseInfixExpression);
@@ -81,7 +84,7 @@ export class Parser {
 
   registerPrefix(
     tokenType: TokenType,
-    fn: (t: Token) => Identifier | IntegerLiteral,
+    fn: (t: Token) => Identifier | IntegerLiteral | Boolean,
   ) {
     this.prefixParseFns[tokenType] = fn;
   }
@@ -250,6 +253,10 @@ export class Parser {
     expression.right = this.parseExpression(precedence);
 
     return expression;
+  }
+
+  parseBoolean(curToken: Token) {
+    return new Boolean(curToken, this.curTokenIs(TokenDef.TRUE));
   }
 
   peekPrecedence(): number {
