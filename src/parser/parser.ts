@@ -6,6 +6,7 @@ import {
   Identifier,
   ReturnStatement,
   ExpressionStatement,
+  IntegerLiteral,
 } from '../ast/ast';
 
 const LOWEST = 1;
@@ -45,6 +46,7 @@ export class Parser {
 
     this.prefixParseFns = new Map();
     this.registerPrefix(TokenDef.IDENT, this.parseIdentifier);
+    this.registerPrefix(TokenDef.INT, this.parseIntegerLiteral);
   }
 
   nextToken(): void {
@@ -52,7 +54,10 @@ export class Parser {
     this.peekToken = this.l.NextToken();
   }
 
-  registerPrefix(tokenType: TokenType, fn: (t: Token) => Identifier | null) {
+  registerPrefix(
+    tokenType: TokenType,
+    fn: (t: Token) => Identifier | IntegerLiteral,
+  ) {
     this.prefixParseFns[tokenType] = fn;
   }
 
@@ -165,11 +170,16 @@ export class Parser {
     return leftExp;
   }
 
-  parseIdentifier(token: Token): Identifier | null {
-    if (token == undefined) {
-      return null;
-    }
-    return new Identifier(token, token.literal);
+  parseIdentifier(curToken: Token): Identifier {
+    return new Identifier(curToken, curToken.literal);
+  }
+
+  parseIntegerLiteral(curToken: Token): IntegerLiteral {
+    const lit = new IntegerLiteral(curToken);
+    const value = Number(curToken.literal);
+    lit.value = value;
+
+    return lit;
   }
 
   curTokenIs(t: TokenType): boolean {

@@ -88,3 +88,16 @@ export class Identifier {
     return this.token.literal;
   }
 }
+
+export class IntegerLiteral {
+  token: Token;
+  value?: number;
+
+  constructor(token: Token) {
+    this.token = token;
+  }
+
+  tokenLiteral(): string | number {
+    return this.token.literal;
+  }
+}
