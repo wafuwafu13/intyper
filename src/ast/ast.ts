@@ -318,3 +318,40 @@ export class BlockStatement<T extends BlockStatementProps> {
     return statements.join('');
   }
 }
+
+export interface FunctionLiteralProps {
+  token: Token<TokenProps>;
+  parameters?: Identifier<IdentifierProps>[];
+  body?: BlockStatement<BlockStatementProps>;
+}
+
+export class FunctionLiteral<T extends FunctionLiteralProps> {
+  token: T['token'];
+  parameters?: T['parameters'];
+  body?: T['body'];
+
+  constructor(token: Token<TokenProps>) {
+    this.token = token;
+  }
+
+  tokenLiteral(): string | number {
+    return this.token.literal;
+  }
+
+  string(): string {
+    let statements = [];
+
+    let params = [];
+    for (const parameter of this.parameters!) {
+      params.push(parameter.string());
+    }
+
+    statements.push(this.tokenLiteral());
+    statements.push('(');
+    statements.push(params.join(', '));
+    statements.push(') ');
+    statements.push(this.body!.string());
+
+    return statements.join('');
+  }
+}

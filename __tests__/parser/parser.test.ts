@@ -541,3 +541,86 @@ describe('testIfElseExpression', () => {
     expect(alternative.expression.value).toBe('y');
   });
 });
+
+describe('testFunctionLiteralParsing', () => {
+  const input = `fn(x, y) { x + y; }`;
+
+  const l = new Lexer(input);
+  const p = new Parser(l);
+
+  const program = p.parseProgram();
+
+  it('checkParserErrros', () => {
+    const errors = p.Errors();
+    if (errors.length != 0) {
+      for (let i = 0; i < errors.length; i++) {
+        console.log('parser error: %s', errors[i]);
+      }
+    }
+    expect(errors.length).toBe(0);
+  });
+
+  it('parseProgram', () => {
+    expect(program).not.toBe(null);
+    expect(program.statements.length).toBe(1);
+  });
+
+  const functionLiteral: any = program.statements[0];
+
+  it('functionLiteralParsing', () => {
+    expect(functionLiteral.expression.parameters.length).toBe(2);
+    expect(functionLiteral.expression.parameters[0].value).toBe('x');
+    expect(functionLiteral.expression.parameters[1].value).toBe('y');
+
+    expect(functionLiteral.expression.body.statements.length).toBe(1);
+    const bodyStmt = functionLiteral.expression.body.statements[0];
+
+    expect(bodyStmt.expression.left.value).toBe('x');
+    expect(bodyStmt.expression.operator).toBe('+');
+    expect(bodyStmt.expression.right.value).toBe('y');
+  });
+});
+
+describe('testFunctionParameterParsing', () => {
+  const tests = [
+    { input: 'fn() {};', expectedParams: [] },
+    { input: 'fn(x) {};', expectedParams: ['x'] },
+    { input: 'fn(x, y, z) {};', expectedParams: ['x', 'y', 'z'] },
+  ];
+
+  for (const test of tests) {
+    const l = new Lexer(test['input']);
+    const p = new Parser(l);
+
+    const program = p.parseProgram();
+
+    it('checkParserErrros', () => {
+      const errors = p.Errors();
+      if (errors.length != 0) {
+        for (let i = 0; i < errors.length; i++) {
+          console.log('parser error: %s', errors[i]);
+        }
+      }
+      expect(errors.length).toBe(0);
+    });
+
+    it('parseProgram', () => {
+      expect(program).not.toBe(null);
+      expect(program.statements.length).toBe(1);
+    });
+
+    const functionLiteral: any = program.statements[0];
+
+    it('functionParameterParsing', () => {
+      expect(functionLiteral.expression.parameters.length).toBe(
+        test['expectedParams'].length,
+      );
+
+      for (let i = 0; i < test['expectedParams'].length; i++) {
+        expect(functionLiteral.expression.parameters[i].value).toBe(
+          test['expectedParams'][i],
+        );
+      }
+    });
+  }
+});

@@ -23,6 +23,8 @@ import {
   IfExpressionProps,
   BlockStatement,
   BlockStatementProps,
+  FunctionLiteral,
+  FunctionLiteralProps,
 } from '../ast/ast';
 
 const LOWEST = 1;
@@ -117,6 +119,7 @@ export class Parser<T extends ParserProps> {
     this.registerPrefix(TokenDef.FALSE, this.parseBoolean);
     this.registerPrefix(TokenDef.LPAREN, this.parseGroupedExpression);
     this.registerPrefix(TokenDef.IF, this.parseIfExpression);
+    this.registerPrefix(TokenDef.FUNCTION, this.parseFunctionLiteral);
 
     this.registerInfix(TokenDef.PLUS, this.parseInfixExpression);
     this.registerInfix(TokenDef.MINUS, this.parseInfixExpression);
@@ -378,6 +381,52 @@ export class Parser<T extends ParserProps> {
     }
 
     return block;
+  }
+
+  parseFunctionLiteral(
+    curToken: Token<TokenProps>,
+  ): FunctionLiteral<FunctionLiteralProps> {
+    const lit = new FunctionLiteral(curToken);
+    if (!this.expectPeek(TokenDef.LPAREN)) {
+      return lit;
+    }
+
+    lit.parameters = this.parseFunctionParameters();
+
+    if (!this.expectPeek(TokenDef.LBRACE)) {
+      return lit;
+    }
+
+    lit.body = this.parseBlockStatement(curToken);
+
+    return lit;
+  }
+
+  parseFunctionParameters(): Identifier<IdentifierProps>[] {
+    let identifiers: Identifier<IdentifierProps>[] = [];
+
+    if (this.peekTokenIs(TokenDef.RPAREN)) {
+      this.nextToken();
+      return identifiers;
+    }
+
+    this.nextToken();
+
+    const ident = new Identifier(this.curToken, this.curToken.literal);
+    identifiers.push(ident);
+
+    while (this.peekTokenIs(TokenDef.COMMA)) {
+      this.nextToken();
+      this.nextToken();
+      const ident = new Identifier(this.curToken, this.curToken.literal);
+      identifiers.push(ident);
+    }
+
+    if (!this.expectPeek(TokenDef.RPAREN)) {
+      return identifiers;
+    }
+
+    return identifiers;
   }
 
   parseBoolean(curToken: Token<TokenProps>): Boolean<BooleanProps> {
