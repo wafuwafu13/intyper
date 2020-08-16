@@ -273,3 +273,78 @@ describe('testBooleanExpression', () => {
     });
   }
 });
+
+describe('testOperatorPrecedenceParsing', () => {
+  const tests = [
+    {
+      input: '-a * b;',
+      expected: '((-a) * b)',
+    },
+    {
+      input: '!-a;',
+      expected: '(!(-a))',
+    },
+    {
+      input: 'a + b + c;',
+      expected: '((a + b) + c)',
+    },
+    {
+      input: 'a + b - c;',
+      expected: '((a + b) - c)',
+    },
+    {
+      input: 'a * b * c;',
+      expected: '((a * b) * c)',
+    },
+    {
+      input: 'a * b / c;',
+      expected: '((a * b) / c)',
+    },
+    {
+      input: 'a + b / c;',
+      expected: '(a + (b / c))',
+    },
+    {
+      input: 'a + b * c + d / e - f;',
+      expected: '(((a + (b * c)) + (d / e)) - f)',
+    },
+    // TODO
+    // {
+    //   input: '3 + 4; -5 * 5;',
+    //   expected: '(3 + 4)((-5) * 5)',
+    // },
+    {
+      input: '5 > 4 == 3 < 4;',
+      expected: '((5 > 4) == (3 < 4))',
+    },
+    {
+      input: '5 < 4 != 3 > 4;',
+      expected: '((5 < 4) != (3 > 4))',
+    },
+    {
+      input: '3 + 4 * 5 == 3 * 1 + 4 * 5;',
+      expected: '((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))',
+    },
+  ];
+
+  for (const test of tests) {
+    const l = new Lexer(test['input']);
+    const p = new Parser(l);
+
+    const program: any = p.parseProgram();
+
+    it('checkParserErrros', () => {
+      const errors = p.Errors();
+      if (errors.length != 0) {
+        for (let i = 0; i < errors.length; i++) {
+          console.log('parser error: %s', errors[i]);
+        }
+      }
+      expect(errors.length).toBe(0);
+    });
+
+    const actual = program.statements[0].expression.string();
+
+    expect(actual).toBe(test['expected']);
+  }
+});

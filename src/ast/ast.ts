@@ -128,6 +128,16 @@ export class PrefixExpression<T extends PrefixExpressionProps> {
   tokenLiteral(): string | number {
     return this.token.literal;
   }
+
+  string(): string {
+    let statements = [];
+    statements.push('(');
+    statements.push(this.operator);
+    statements.push(this.right!.string());
+    statements.push(')');
+
+    return statements.join('');
+  }
 }
 
 export interface InfixExpressionProps {
@@ -153,6 +163,25 @@ export class InfixExpression<T extends InfixExpressionProps> {
   tokenLiteral(): string | number {
     return this.token.literal;
   }
+
+  string(): string {
+    let statements = [];
+    statements.push('(');
+    try {
+      statements.push(this.left.string());
+    } catch {
+      statements.push(this.left.value);
+    }
+    statements.push(' ' + this.operator + ' ');
+    try {
+      statements.push(this.right!.string());
+    } catch {
+      statements.push(this.right!.value);
+    }
+    statements.push(')');
+
+    return statements.join('');
+  }
 }
 
 export interface IdentifierProps {
@@ -169,10 +198,12 @@ export class Identifier<T extends IdentifierProps> {
     this.value = value;
   }
 
-  expressionNode() {} // Why defined?
-
   tokenLiteral(): string | number {
     return this.token.literal;
+  }
+
+  string(): string | number {
+    return this.value;
   }
 }
 
