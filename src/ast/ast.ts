@@ -251,3 +251,70 @@ export class Boolean<T extends BooleanProps> {
     return this.token.literal;
   }
 }
+
+export interface IfExpressionProps {
+  token: Token<TokenProps>;
+  condition?: Identifier<IdentifierProps>;
+  consequence?: BlockStatement<BlockStatementProps>;
+  alternative?: BlockStatement<BlockStatementProps>;
+}
+
+export class IfExpression<T extends IfExpressionProps> {
+  token: T['token'];
+  condition?: T['condition'];
+  consequence?: T['consequence'];
+  alternative?: T['alternative'];
+
+  constructor(token: T['token']) {
+    this.token = token;
+  }
+
+  tokenLiteral(): string | number {
+    return this.token.literal;
+  }
+
+  string(): string | number {
+    let statements = [];
+    statements.push('if');
+    statements.push(this.condition!.string());
+    statements.push(' ');
+    statements.push(this.consequence!.string());
+
+    if (this.alternative != null) {
+      statements.push('else');
+      statements.push(this.alternative.string());
+    }
+
+    return statements.join('');
+  }
+}
+
+export interface BlockStatementProps {
+  token: Token<TokenProps>;
+  statements?:
+    | LetStatement<LetStatementProps>[]
+    | ReturnStatement<ReturnStatementProps>[]
+    | ExpressionStatement<ExpressionStatementProps>[];
+}
+
+export class BlockStatement<T extends BlockStatementProps> {
+  token: T['token'];
+  statements?: T['statements'];
+
+  constructor(token: T['token']) {
+    this.token = token;
+  }
+
+  tokenLiteral(): string | number {
+    return this.token.literal;
+  }
+
+  string(): string {
+    let statements = [];
+    for (const statement of this.statements!) {
+      statements.push(statement.string());
+    }
+
+    return statements.join('');
+  }
+}

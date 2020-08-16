@@ -19,6 +19,10 @@ import {
   IdentifierProps,
   IntegerLiteralProps,
   BooleanProps,
+  IfExpression,
+  IfExpressionProps,
+  BlockStatement,
+  BlockStatementProps,
 } from '../ast/ast';
 
 const LOWEST = 1;
@@ -112,6 +116,7 @@ export class Parser<T extends ParserProps> {
     this.registerPrefix(TokenDef.TRUE, this.parseBoolean);
     this.registerPrefix(TokenDef.FALSE, this.parseBoolean);
     this.registerPrefix(TokenDef.LPAREN, this.parseGroupedExpression);
+    this.registerPrefix(TokenDef.IF, this.parseIfExpression);
 
     this.registerInfix(TokenDef.PLUS, this.parseInfixExpression);
     this.registerInfix(TokenDef.MINUS, this.parseInfixExpression);
@@ -315,6 +320,54 @@ export class Parser<T extends ParserProps> {
     }
 
     return exp;
+  }
+
+  parseIfExpression(
+    curToken: Token<TokenProps>,
+  ): IfExpression<IfExpressionProps> {
+    const expression = new IfExpression(curToken);
+
+    if (this.expectPeek(TokenDef.LPAREN)) {
+      return expression;
+    }
+
+    this.nextToken();
+
+    expression.condition = this.parseExpression(LOWEST);
+
+    if (!this.expectPeek(TokenDef.RPAREN)) {
+      return expression;
+    }
+
+    if (!this.expectPeek(TokenDef.LBRACE)) {
+      return expression;
+    }
+
+    expression.consequence = this.parseBlockStatement(this.curToken);
+
+    return expression;
+  }
+
+  parseBlockStatement(
+    curToken: Token<TokenProps>,
+  ): BlockStatement<BlockStatementProps> {
+    const block = new BlockStatement(curToken);
+    block.statements = [];
+
+    this.nextToken();
+
+    while (
+      !this.curTokenIs(TokenDef.RBRACE) &&
+      !this.curTokenIs(TokenDef.EOF)
+    ) {
+      const stmt: any = this.parseStatement();
+      if (stmt != null) {
+        block.statements.push(stmt);
+      }
+      this.nextToken();
+    }
+
+    return block;
   }
 
   parseBoolean(curToken: Token<TokenProps>): Boolean<BooleanProps> {

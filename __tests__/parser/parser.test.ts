@@ -411,9 +411,9 @@ describe('testOperatorPrecedenceParsing', () => {
     },
     // TODO
     // {
-		// 	input: "1 + (2 + 3) + 4;",
-		// 	expected: "((1 + (2 + 3)) + 4)",
-		// },
+    // 	input: "1 + (2 + 3) + 4;",
+    // 	expected: "((1 + (2 + 3)) + 4)",
+    // },
   ];
 
   for (const test of tests) {
@@ -432,8 +432,44 @@ describe('testOperatorPrecedenceParsing', () => {
       expect(errors.length).toBe(0);
     });
 
+    it('parseProgram', () => {
+      expect(program).not.toBe(null);
+      expect(program.statements.length).toBe(1);
+    });
+
     const actual = program.statements[0].expression.string();
 
     expect(actual).toBe(test['expected']);
   }
 });
+
+// describe('testIfExpression', () => {
+//   const input = `if (x < y) { x }`
+
+//   const l = new Lexer(input);
+//   const p = new Parser(l);
+
+//   const program = p.parseProgram()
+
+//   it('checkParserErrros', () => {
+//     const errors = p.Errors();
+//     if (errors.length != 0) {
+//       for (let i = 0; i < errors.length; i++) {
+//         console.log('parser error: %s', errors[i]);
+//       }
+//     }
+//     expect(errors.length).toBe(0);
+//   });
+
+//   it('parseProgram', () => {
+//     expect(program).not.toBe(null);
+//     expect(program.statements.length).toBe(1);
+//   });
+
+// const exp: any = program.statements[0];
+
+// it('ifExpression', () => {
+//   expect(exp.)
+// })
+
+// })
