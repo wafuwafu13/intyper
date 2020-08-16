@@ -315,7 +315,7 @@ export class Parser<T extends ParserProps> {
     this.nextToken();
     const exp = this.parseExpression(LOWEST);
 
-    if (!this.peekTokenIs(TokenDef.RPAREN)) {
+    if (!this.expectPeek(TokenDef.RPAREN)) {
       return exp;
     }
 
