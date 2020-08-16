@@ -409,6 +409,11 @@ describe('testOperatorPrecedenceParsing', () => {
       input: '3 < 5 == true;',
       expected: '((3 < 5) == true)',
     },
+    // TODO
+    // {
+		// 	input: "1 + (2 + 3) + 4;",
+		// 	expected: "((1 + (2 + 3)) + 4)",
+		// },
   ];
 
   for (const test of tests) {

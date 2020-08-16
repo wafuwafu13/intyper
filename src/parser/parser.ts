@@ -111,6 +111,7 @@ export class Parser<T extends ParserProps> {
     this.registerPrefix(TokenDef.MINUS, this.parsePrefixExpression);
     this.registerPrefix(TokenDef.TRUE, this.parseBoolean);
     this.registerPrefix(TokenDef.FALSE, this.parseBoolean);
+    this.registerPrefix(TokenDef.LPAREN, this.parseGroupedExpression);
 
     this.registerInfix(TokenDef.PLUS, this.parseInfixExpression);
     this.registerInfix(TokenDef.MINUS, this.parseInfixExpression);
@@ -303,6 +304,17 @@ export class Parser<T extends ParserProps> {
     expression.right = this.parseExpression(precedence);
 
     return expression;
+  }
+
+  parseGroupedExpression(): Identifier<IdentifierProps> {
+    this.nextToken();
+    const exp = this.parseExpression(LOWEST);
+
+    if (!this.peekTokenIs(TokenDef.RPAREN)) {
+      return exp;
+    }
+
+    return exp;
   }
 
   parseBoolean(curToken: Token<TokenProps>): Boolean<BooleanProps> {
