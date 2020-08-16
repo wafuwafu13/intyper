@@ -7,6 +7,12 @@ import {
   ProgramProps,
   LetStatementProps,
   ReturnStatementProps,
+  ExpressionStatement,
+  ExpressionStatementProps,
+  PrefixExpression,
+  PrefixExpressionProps,
+  InfixExpression,
+  InfixExpressionProps,
 } from '../../src/ast/ast';
 
 describe('testLetStatement', () => {
@@ -19,7 +25,7 @@ let foobar = 838383;
   const l = new Lexer(input);
   const p = new Parser(l);
 
-  const program: Program<ProgramProps> | null = p.parseProgram();
+  const program: Program<ProgramProps> = p.parseProgram();
 
   it('checkParserErrros', () => {
     const errors = p.Errors();
@@ -33,9 +39,6 @@ let foobar = 838383;
 
   it('parseProgram', () => {
     expect(program).not.toBe(null);
-    if (program == null) {
-      return;
-    }
     expect(program.statements.length).toBe(3);
   });
 
@@ -43,14 +46,7 @@ let foobar = 838383;
 
   for (let i = 0; i < tests.length; i++) {
     it('letStatement', () => {
-      if (program == null) {
-        return;
-      }
-      // TODO
-      const stmt:
-        | LetStatement<LetStatementProps>
-        | ReturnStatement<ReturnStatementProps>
-        | any = program.statements[i];
+      const stmt: LetStatement<LetStatementProps> | any = program.statements[i];
       if (stmt.name == undefined) {
         return;
       }
@@ -71,7 +67,7 @@ return 993322;
   const l = new Lexer(input);
   const p = new Parser(l);
 
-  const program: Program<ProgramProps> | null = p.parseProgram();
+  const program: Program<ProgramProps> = p.parseProgram();
 
   it('checkParserErrros', () => {
     const errors = p.Errors();
@@ -85,21 +81,11 @@ return 993322;
 
   it('parseProgram', () => {
     expect(program).not.toBe(null);
-    if (program == null) {
-      return;
-    }
     expect(program.statements.length).toBe(3);
   });
 
-  if (program == null) {
-    return;
-  }
-
   for (let i = 0; i < program.statements.length; i++) {
     it('returnStatement', () => {
-      if (program == null) {
-        return;
-      }
       const stmt: ReturnStatement<ReturnStatementProps> = program.statements[i];
       expect(stmt.tokenLiteral()).toBe('return');
     });
@@ -112,7 +98,7 @@ describe('testIdentifierExpression', () => {
   const l = new Lexer(input);
   const p = new Parser(l);
 
-  const program = p.parseProgram();
+  const program: Program<ProgramProps> = p.parseProgram();
 
   it('checkParserErrros', () => {
     const errors = p.Errors();
@@ -126,20 +112,14 @@ describe('testIdentifierExpression', () => {
 
   it('parseProgram', () => {
     expect(program).not.toBe(null);
-    if (program == null) {
-      return;
-    }
     expect(program.statements.length).toBe(1);
   });
 
-  if (program == null) {
-    return;
-  }
-
-  const ident: any = program.statements[0];
+  const ident: ExpressionStatement<ExpressionStatementProps> =
+    program.statements[0];
 
   it('expressionIdentifier', () => {
-    expect(ident.expression.value).toBe('foobar');
+    expect(ident.expression!.value).toBe('foobar');
     expect(ident.tokenLiteral()).toBe('foobar');
   });
 });
@@ -150,7 +130,7 @@ describe('testIntegerLiteralExpression', () => {
   const l = new Lexer(input);
   const p = new Parser(l);
 
-  const program = p.parseProgram();
+  const program: Program<ProgramProps> = p.parseProgram();
 
   it('checkParserErrros', () => {
     const errors = p.Errors();
@@ -164,20 +144,14 @@ describe('testIntegerLiteralExpression', () => {
 
   it('parseProgram', () => {
     expect(program).not.toBe(null);
-    if (program == null) {
-      return;
-    }
     expect(program.statements.length).toBe(1);
   });
 
-  if (program == null) {
-    return;
-  }
-
-  const literal: any = program.statements[0];
+  const literal: ExpressionStatement<ExpressionStatementProps> =
+    program.statements[0];
 
   it('expressionIdentifier', () => {
-    expect(literal.expression.value).toBe(5);
+    expect(literal.expression!.value).toBe(5);
     expect(literal.tokenLiteral()).toBe('5');
   });
 });
@@ -192,7 +166,7 @@ describe('testParsingPrefixExpressions', () => {
     const l = new Lexer(test['input']);
     const p = new Parser(l);
 
-    const program = p.parseProgram();
+    const program: Program<ProgramProps> = p.parseProgram();
 
     it('checkParserErrros', () => {
       const errors = p.Errors();
@@ -206,17 +180,11 @@ describe('testParsingPrefixExpressions', () => {
 
     it('parseProgram', () => {
       expect(program).not.toBe(null);
-      if (program == null) {
-        return;
-      }
       expect(program.statements.length).toBe(1);
     });
 
-    if (program == null) {
-      return;
-    }
-
-    const exp: any = program.statements[0];
+    const exp: PrefixExpression<PrefixExpressionProps> | any =
+      program.statements[0];
 
     it('expressionStatement', () => {
       expect(exp.expression.operator).toBe(test['operator']);
@@ -244,7 +212,7 @@ describe('testParsingInfixExpressions', () => {
     const l = new Lexer(test['input']);
     const p = new Parser(l);
 
-    const program = p.parseProgram();
+    const program: Program<ProgramProps> = p.parseProgram();
 
     it('checkParserErrros', () => {
       const errors = p.Errors();
@@ -258,17 +226,11 @@ describe('testParsingInfixExpressions', () => {
 
     it('parseProgram', () => {
       expect(program).not.toBe(null);
-      if (program == null) {
-        return;
-      }
       expect(program.statements.length).toBe(1);
     });
 
-    if (program == null) {
-      return;
-    }
-
-    const exp: any = program.statements[0];
+    const exp: InfixExpression<InfixExpressionProps> | any =
+      program.statements[0];
 
     it('expressionStatement', () => {
       expect(exp.expression.left.value).toBe(test['leftvalue']);
@@ -288,7 +250,7 @@ describe('testBooleanExpression', () => {
     const l = new Lexer(test['input']);
     const p = new Parser(l);
 
-    const program = p.parseProgram();
+    const program: Program<ProgramProps> = p.parseProgram();
 
     it('checkParserErrros', () => {
       const errors = p.Errors();
@@ -302,20 +264,14 @@ describe('testBooleanExpression', () => {
 
     it('parseProgram', () => {
       expect(program).not.toBe(null);
-      if (program == null) {
-        return;
-      }
       expect(program.statements.length).toBe(1);
     });
 
-    if (program == null) {
-      return;
-    }
-
-    const boolean: any = program.statements[0];
+    const boolean: ExpressionStatement<ExpressionStatementProps> =
+      program.statements[0];
 
     it('booleanStatement', () => {
-      expect(boolean.expression.value).toBe(test['expectedBoolean']);
+      expect(boolean.expression!.value).toBe(test['expectedBoolean']);
     });
   }
 });

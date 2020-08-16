@@ -135,7 +135,7 @@ export class Parser<T extends ParserProps> {
       | Identifier<IdentifierProps>
       | IntegerLiteral<IntegerLiteralProps>
       | Boolean<BooleanProps>,
-  ) {
+  ): void {
     this.prefixParseFns.set(tokenType, fn);
   }
 
@@ -145,7 +145,7 @@ export class Parser<T extends ParserProps> {
       t: Token<TokenProps>,
       left: Identifier<IdentifierProps>,
     ) => InfixExpression<InfixExpressionProps>,
-  ) {
+  ): void {
     this.infixParseFns.set(tokenType, fn);
   }
 
@@ -166,8 +166,7 @@ export class Parser<T extends ParserProps> {
   parseStatement():
     | LetStatement<LetStatementProps>
     | ReturnStatement<ReturnStatementProps>
-    | ExpressionStatement<ExpressionStatementProps>
-    | null {
+    | ExpressionStatement<ExpressionStatementProps> {
     switch (this.curToken.type) {
       case TokenDef.LET:
         return this.parseLetStatement();
@@ -178,19 +177,19 @@ export class Parser<T extends ParserProps> {
     }
   }
 
-  parseLetStatement(): LetStatement<LetStatementProps> | null {
-    const stmt: LetStatement<LetStatementProps> | null = new LetStatement(
+  parseLetStatement(): LetStatement<LetStatementProps> {
+    const stmt: LetStatement<LetStatementProps> = new LetStatement(
       this.curToken,
     );
 
     if (!this.expectPeek(TokenDef.IDENT)) {
-      return null;
+      return stmt;
     }
 
     stmt.name = new Identifier(this.curToken, this.curToken.literal);
 
     if (!this.expectPeek(TokenDef.ASSIGN)) {
-      return null;
+      return stmt;
     }
 
     while (!this.curTokenIs(TokenDef.SEMICOLON)) {
@@ -200,10 +199,10 @@ export class Parser<T extends ParserProps> {
     return stmt;
   }
 
-  parseReturnStatement(): ReturnStatement<ReturnStatementProps> | null {
-    const stmt: ReturnStatement<
-      ReturnStatementProps
-    > | null = new ReturnStatement(this.curToken);
+  parseReturnStatement(): ReturnStatement<ReturnStatementProps> {
+    const stmt: ReturnStatement<ReturnStatementProps> = new ReturnStatement(
+      this.curToken,
+    );
 
     this.nextToken();
 
@@ -214,12 +213,10 @@ export class Parser<T extends ParserProps> {
     return stmt;
   }
 
-  parseExpressionStatement(): ExpressionStatement<
-    ExpressionStatementProps
-  > | null {
-    const stmt: ExpressionStatement<
-      ExpressionStatementProps
-    > | null = new ExpressionStatement(this.curToken);
+  parseExpressionStatement(): ExpressionStatement<ExpressionStatementProps> {
+    const stmt: ExpressionStatement<ExpressionStatementProps> = new ExpressionStatement(
+      this.curToken,
+    );
 
     stmt.expression = this.parseExpression(LOWEST);
 
@@ -230,25 +227,30 @@ export class Parser<T extends ParserProps> {
     return stmt;
   }
 
-  noPrefixParseFnError(t: TokenType) {
+  noPrefixParseFnError(t: TokenType): void {
     const msg = 'no prefix parse function for ' + t + ' found';
     this.errors.push(msg);
   }
 
-  parseExpression(precedence: number) {
-    const prefix: any = this.prefixParseFns.get(this.curToken.type)!.bind(this); //  [Function: parseIdentifier]
+  parseExpression(precedence: number): any {
+    const prefix: (t: Token<TokenProps>) => any = this.prefixParseFns
+      .get(this.curToken.type)!
+      .bind(this); //  [Function: parseIdentifier]
     if (prefix == null) {
       this.noPrefixParseFnError(this.curToken.type);
       return null;
     }
 
-    let leftExp = prefix(this.curToken);
+    let leftExp: any = prefix(this.curToken);
 
     while (
       !this.curTokenIs(TokenDef.SEMICOLON) &&
       precedence < this.peekPrecedence()
     ) {
-      const infix: any = this.infixParseFns
+      const infix: (
+        t: Token<TokenProps>,
+        left: Identifier<IdentifierProps>,
+      ) => InfixExpression<InfixExpressionProps> = this.infixParseFns
         .get(this.peekToken.type)!
         .bind(this);
       if (infix == null) {
@@ -303,7 +305,7 @@ export class Parser<T extends ParserProps> {
     return expression;
   }
 
-  parseBoolean(curToken: Token<TokenProps>) {
+  parseBoolean(curToken: Token<TokenProps>): Boolean<BooleanProps> {
     return new Boolean(curToken, this.curTokenIs(TokenDef.TRUE));
   }
 

@@ -183,7 +183,7 @@ export class Lexer<T extends LexerProps> {
     return tok;
   }
 
-  newToken(tokenType: string, ch: string | number) {
+  newToken(tokenType: string, ch: string | number): Token<TokenProps> {
     return new Token(tokenType, ch);
   }
 }
