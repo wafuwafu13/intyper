@@ -223,6 +223,10 @@ export class IntegerLiteral<T extends IntegerLiteralProps> {
   tokenLiteral(): string | number {
     return this.token.literal;
   }
+
+  string(): string | number {
+    return this.token.literal;
+  }
 }
 
 export interface BooleanProps {
@@ -240,6 +244,10 @@ export class Boolean<T extends BooleanProps> {
   }
 
   tokenLiteral(): string | number {
+    return this.token.literal;
+  }
+
+  string(): string | number {
     return this.token.literal;
   }
 }

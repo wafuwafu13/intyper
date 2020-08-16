@@ -156,8 +156,12 @@ describe('testIntegerLiteralExpression', () => {
 
 describe('testParsingPrefixExpressions', () => {
   const prefixTests = [
-    { input: '!5', operator: '!', integerValue: 5 },
-    { input: '-15', operator: '-', integerValue: 15 },
+    { input: '!5', operator: '!', value: 5 },
+    { input: '-15', operator: '-', value: 15 },
+    { input: '!foobar;', operator: '!', value: 'foobar' },
+    { input: '-foobar;', operator: '-', value: 'foobar' },
+    { input: '!true;', operator: '!', value: true },
+    { input: '!false;', operator: '!', value: false },
   ];
 
   for (const test of prefixTests) {
@@ -186,24 +190,88 @@ describe('testParsingPrefixExpressions', () => {
 
     it('expressionStatement', () => {
       expect(exp.expression.operator).toBe(test['operator']);
-      expect(exp.expression.right.value).toBe(test['integerValue']);
-      expect(exp.expression.right.tokenLiteral()).toBe(
-        String(test['integerValue']),
-      );
+      expect(exp.expression.right.value).toBe(test['value']);
+      expect(exp.expression.right.tokenLiteral()).toBe(String(test['value']));
     });
   }
 });
 
 describe('testParsingInfixExpressions', () => {
   const prefixTests = [
-    { input: '5 + 5', leftvalue: 5, operator: '+', rightValue: 5 },
-    { input: '5 - 5', leftvalue: 5, operator: '-', rightValue: 5 },
-    { input: '5 * 5', leftvalue: 5, operator: '*', rightValue: 5 },
-    { input: '5 / 5', leftvalue: 5, operator: '/', rightValue: 5 },
-    { input: '5 > 5', leftvalue: 5, operator: '>', rightValue: 5 },
-    { input: '5 < 5', leftvalue: 5, operator: '<', rightValue: 5 },
-    { input: '5 == 5', leftvalue: 5, operator: '==', rightValue: 5 },
-    { input: '5 != 5', leftvalue: 5, operator: '!=', rightValue: 5 },
+    { input: '5 + 5', leftValue: 5, operator: '+', rightValue: 5 },
+    { input: '5 - 5', leftValue: 5, operator: '-', rightValue: 5 },
+    { input: '5 * 5', leftValue: 5, operator: '*', rightValue: 5 },
+    { input: '5 / 5', leftValue: 5, operator: '/', rightValue: 5 },
+    { input: '5 > 5', leftValue: 5, operator: '>', rightValue: 5 },
+    { input: '5 < 5', leftValue: 5, operator: '<', rightValue: 5 },
+    { input: '5 == 5', leftValue: 5, operator: '==', rightValue: 5 },
+    { input: '5 != 5', leftValue: 5, operator: '!=', rightValue: 5 },
+    {
+      input: 'foobar + barfoo;',
+      leftValue: 'foobar',
+      operator: '+',
+      rightValue: 'barfoo',
+    },
+    {
+      input: 'foobar - barfoo;',
+      leftValue: 'foobar',
+      operator: '-',
+      rightValue: 'barfoo',
+    },
+    {
+      input: 'foobar * barfoo;',
+      leftValue: 'foobar',
+      operator: '*',
+      rightValue: 'barfoo',
+    },
+    {
+      input: 'foobar / barfoo;',
+      leftValue: 'foobar',
+      operator: '/',
+      rightValue: 'barfoo',
+    },
+    {
+      input: 'foobar > barfoo;',
+      leftValue: 'foobar',
+      operator: '>',
+      rightValue: 'barfoo',
+    },
+    {
+      input: 'foobar < barfoo;',
+      leftValue: 'foobar',
+      operator: '<',
+      rightValue: 'barfoo',
+    },
+    {
+      input: 'foobar == barfoo;',
+      leftValue: 'foobar',
+      operator: '==',
+      rightValue: 'barfoo',
+    },
+    {
+      input: 'foobar != barfoo;',
+      leftValue: 'foobar',
+      operator: '!=',
+      rightValue: 'barfoo',
+    },
+    {
+      input: 'true == true;',
+      leftValue: true,
+      operator: '==',
+      rightValue: true,
+    },
+    {
+      input: 'true != false;',
+      leftValue: true,
+      operator: '!=',
+      rightValue: false,
+    },
+    {
+      input: 'false == false;',
+      leftValue: false,
+      operator: '==',
+      rightValue: false,
+    },
   ];
 
   for (const test of prefixTests) {
@@ -231,7 +299,7 @@ describe('testParsingInfixExpressions', () => {
       program.statements[0];
 
     it('expressionStatement', () => {
-      expect(exp.expression.left.value).toBe(test['leftvalue']);
+      expect(exp.expression.left.value).toBe(test['leftValue']);
       expect(exp.expression.operator).toBe(test['operator']);
       expect(exp.expression.right.value).toBe(test['rightValue']);
     });
@@ -324,6 +392,22 @@ describe('testOperatorPrecedenceParsing', () => {
     {
       input: '3 + 4 * 5 == 3 * 1 + 4 * 5;',
       expected: '((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))',
+    },
+    {
+      input: 'true;',
+      expected: 'true',
+    },
+    {
+      input: 'false;',
+      expected: 'false',
+    },
+    {
+      input: '3 > 5 == false;',
+      expected: '((3 > 5) == false)',
+    },
+    {
+      input: '3 < 5 == true;',
+      expected: '((3 < 5) == true)',
     },
   ];
 
