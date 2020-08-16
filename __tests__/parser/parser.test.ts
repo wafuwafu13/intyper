@@ -466,33 +466,78 @@ describe('testOperatorPrecedenceParsing', () => {
   }
 });
 
-// describe('testIfExpression', () => {
-//   const input = `if (x < y) { x }`
+describe('testIfExpression', () => {
+  const input = `if (x < y) { x }`;
 
-//   const l = new Lexer(input);
-//   const p = new Parser(l);
+  const l = new Lexer(input);
+  const p = new Parser(l);
 
-//   const program = p.parseProgram()
+  const program = p.parseProgram();
 
-//   it('checkParserErrros', () => {
-//     const errors = p.Errors();
-//     if (errors.length != 0) {
-//       for (let i = 0; i < errors.length; i++) {
-//         console.log('parser error: %s', errors[i]);
-//       }
-//     }
-//     expect(errors.length).toBe(0);
-//   });
+  it('checkParserErrros', () => {
+    const errors = p.Errors();
+    if (errors.length != 0) {
+      for (let i = 0; i < errors.length; i++) {
+        console.log('parser error: %s', errors[i]);
+      }
+    }
+    expect(errors.length).toBe(0);
+  });
 
-//   it('parseProgram', () => {
-//     expect(program).not.toBe(null);
-//     expect(program.statements.length).toBe(1);
-//   });
+  it('parseProgram', () => {
+    expect(program).not.toBe(null);
+    expect(program.statements.length).toBe(1);
+  });
 
-// const exp: any = program.statements[0];
+  const exp: any = program.statements[0];
 
-// it('ifExpression', () => {
-//   expect(exp.)
-// })
+  it('ifExpression', () => {
+    expect(exp.expression.condition.left.value).toBe('x');
+    expect(exp.expression.condition.operator).toBe('<');
+    expect(exp.expression.condition.right.value).toBe('y');
+    expect(exp.expression.consequence.statements.length).toBe(1);
 
-// })
+    const consequence = exp.expression.consequence.statements[0];
+    expect(consequence.expression.value).toBe('x');
+  });
+});
+
+describe('testIfElseExpression', () => {
+  const input = `if (x < y) { x } else { y }`;
+
+  const l = new Lexer(input);
+  const p = new Parser(l);
+
+  const program = p.parseProgram();
+
+  it('checkParserErrros', () => {
+    const errors = p.Errors();
+    if (errors.length != 0) {
+      for (let i = 0; i < errors.length; i++) {
+        console.log('parser error: %s', errors[i]);
+      }
+    }
+    expect(errors.length).toBe(0);
+  });
+
+  it('parseProgram', () => {
+    expect(program).not.toBe(null);
+    expect(program.statements.length).toBe(1);
+  });
+
+  const exp: any = program.statements[0];
+
+  it('ifElseExpression', () => {
+    expect(exp.expression.condition.left.value).toBe('x');
+    expect(exp.expression.condition.operator).toBe('<');
+    expect(exp.expression.condition.right.value).toBe('y');
+    expect(exp.expression.consequence.statements.length).toBe(1);
+
+    const consequence = exp.expression.consequence.statements[0];
+    expect(consequence.expression.value).toBe('x');
+
+    expect(exp.expression.alternative.statements.length).toBe(1);
+    const alternative = exp.expression.alternative.statements[0];
+    expect(alternative.expression.value).toBe('y');
+  });
+});

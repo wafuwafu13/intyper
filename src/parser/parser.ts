@@ -327,7 +327,7 @@ export class Parser<T extends ParserProps> {
   ): IfExpression<IfExpressionProps> {
     const expression = new IfExpression(curToken);
 
-    if (this.expectPeek(TokenDef.LPAREN)) {
+    if (!this.expectPeek(TokenDef.LPAREN)) {
       return expression;
     }
 
@@ -344,6 +344,16 @@ export class Parser<T extends ParserProps> {
     }
 
     expression.consequence = this.parseBlockStatement(this.curToken);
+
+    if (this.peekTokenIs(TokenDef.ELSE)) {
+      this.nextToken();
+
+      if (!this.expectPeek(TokenDef.LBRACE)) {
+        return expression;
+      }
+
+      expression.alternative = this.parseBlockStatement(this.curToken);
+    }
 
     return expression;
   }
