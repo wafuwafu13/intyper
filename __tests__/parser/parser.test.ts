@@ -47,9 +47,6 @@ let foobar = 838383;
   for (let i = 0; i < tests.length; i++) {
     it('letStatement', () => {
       const stmt: LetStatement<LetStatementProps> | any = program.statements[i];
-      if (stmt.name == undefined) {
-        return;
-      }
       expect(stmt.tokenLiteral()).toBe('let');
       expect(stmt.name.value).toBe(tests[i]);
       expect(stmt.name.tokenLiteral()).toBe(tests[i]);
@@ -86,7 +83,8 @@ return 993322;
 
   for (let i = 0; i < program.statements.length; i++) {
     it('returnStatement', () => {
-      const stmt: ReturnStatement<ReturnStatementProps> = program.statements[i];
+      const stmt: ReturnStatement<ReturnStatementProps> | any =
+        program.statements[i];
       expect(stmt.tokenLiteral()).toBe('return');
     });
   }

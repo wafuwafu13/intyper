@@ -18,7 +18,7 @@ export class Program<T extends ProgramProps> {
 export interface LetStatementProps {
   token: Token<TokenProps>;
   name: Identifier<IdentifierProps>;
-  value?: any;
+  value?: Identifier<IdentifierProps>;
 }
 
 export class LetStatement<T extends LetStatementProps> {
@@ -31,21 +31,34 @@ export class LetStatement<T extends LetStatementProps> {
     this.name = name;
   }
 
-  statementNode() {}
-
   tokenLiteral(): string | number {
     return this.token.literal;
+  }
+
+  string(): string {
+    let statements = [];
+    statements.push(this.tokenLiteral() + ' ');
+    statements.push(this.name.value);
+    statements.push(' = ');
+
+    if (this.value != null) {
+      statements.push(this.value.value);
+    }
+
+    statements.push(';');
+
+    return statements.join('');
   }
 }
 
 export interface ReturnStatementProps {
   token: Token<TokenProps>;
-  value?: any;
+  value?: Identifier<IdentifierProps>;
 }
 
 export class ReturnStatement<T extends ReturnStatementProps> {
   token: T['token'];
-  value?: T['value'];
+  returnValue?: T['value'];
 
   constructor(token: T['token']) {
     this.token = token;
@@ -54,12 +67,25 @@ export class ReturnStatement<T extends ReturnStatementProps> {
   tokenLiteral(): string | number {
     return this.token.literal;
   }
+
+  string(): string {
+    let statements = [];
+    statements.push(this.tokenLiteral() + ' ');
+
+    if (this.returnValue != null) {
+      statements.push(this.returnValue);
+    }
+
+    statements.push(';');
+
+    return statements.join('');
+  }
 }
 
 export interface ExpressionStatementProps {
   token: Token<TokenProps>;
   expression?: Identifier<IdentifierProps>;
-  value?: any;
+  value?: Identifier<IdentifierProps>;
 }
 
 export class ExpressionStatement<T extends ExpressionStatementProps> {
@@ -73,6 +99,13 @@ export class ExpressionStatement<T extends ExpressionStatementProps> {
 
   tokenLiteral(): string | number {
     return this.token.literal;
+  }
+
+  string(): string | number {
+    if (this.expression != null) {
+      return this.expression.value;
+    }
+    return '';
   }
 }
 
