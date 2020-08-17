@@ -196,7 +196,11 @@ export class Parser<T extends ParserProps> {
       return stmt;
     }
 
-    while (!this.curTokenIs(TokenDef.SEMICOLON)) {
+    this.nextToken();
+
+    stmt.value = this.parseExpression(LOWEST);
+
+    if (this.peekTokenIs(TokenDef.SEMICOLON)) {
       this.nextToken();
     }
 
@@ -210,7 +214,9 @@ export class Parser<T extends ParserProps> {
 
     this.nextToken();
 
-    while (!this.curTokenIs(TokenDef.SEMICOLON)) {
+    stmt.returnValue = this.parseExpression(LOWEST);
+
+    if (this.peekTokenIs(TokenDef.SEMICOLON)) {
       this.nextToken();
     }
 

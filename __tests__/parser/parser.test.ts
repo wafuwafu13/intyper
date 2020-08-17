@@ -16,76 +16,81 @@ import {
 } from '../../src/ast/ast';
 
 describe('testLetStatement', () => {
-  const input = `
-let x = 5;
-let y = 10;
-let foobar = 838383;
-`;
+  const tests = [
+    { input: 'let x = 5;', expectedIdentifier: 'x', expectedValue: 5 },
+    { input: 'let y = true;', expectedIdentifier: 'y', expectedValue: true },
+    {
+      input: 'let foobar = y;',
+      expectedIdentifier: 'foobar',
+      expectedValue: 'y',
+    },
+  ];
 
-  const l = new Lexer(input);
-  const p = new Parser(l);
+  for (const test of tests) {
+    const l = new Lexer(test['input']);
+    const p = new Parser(l);
 
-  const program: Program<ProgramProps> = p.parseProgram();
+    const program: Program<ProgramProps> = p.parseProgram();
 
-  it('checkParserErrros', () => {
-    const errors = p.Errors();
-    if (errors.length != 0) {
-      for (let i = 0; i < errors.length; i++) {
-        console.log('parser error: %s', errors[i]);
+    it('checkParserErrros', () => {
+      const errors = p.Errors();
+      if (errors.length != 0) {
+        for (let i = 0; i < errors.length; i++) {
+          console.log('parser error: %s', errors[i]);
+        }
       }
-    }
-    expect(errors.length).toBe(0);
-  });
+      expect(errors.length).toBe(0);
+    });
 
-  it('parseProgram', () => {
-    expect(program).not.toBe(null);
-    expect(program.statements.length).toBe(3);
-  });
+    it('parseProgram', () => {
+      expect(program).not.toBe(null);
+      expect(program.statements.length).toBe(1);
+    });
 
-  const tests = ['x', 'y', 'foobar'];
+    const stmt: LetStatement<LetStatementProps> | any = program.statements[0];
 
-  for (let i = 0; i < tests.length; i++) {
     it('letStatement', () => {
-      const stmt: LetStatement<LetStatementProps> | any = program.statements[i];
-      expect(stmt.tokenLiteral()).toBe('let');
-      expect(stmt.name.value).toBe(tests[i]);
-      expect(stmt.name.tokenLiteral()).toBe(tests[i]);
+      expect(stmt.token.literal).toBe('let');
+      expect(stmt.name.value).toBe(test['expectedIdentifier']);
+      expect(stmt.value.value).toBe(test['expectedValue']);
     });
   }
 });
 
 describe('testRetrunStatement', () => {
-  const input = `
-return 5;
-return 10;
-return 993322;
-`;
+  const tests = [
+    { input: 'return 5;', expectedValue: 5 },
+    { input: 'return true;', expectedValue: true },
+    { input: 'return foobar;', expectedValue: 'foobar' },
+  ];
 
-  const l = new Lexer(input);
-  const p = new Parser(l);
+  for (const test of tests) {
+    const l = new Lexer(test['input']);
+    const p = new Parser(l);
 
-  const program: Program<ProgramProps> = p.parseProgram();
+    const program: Program<ProgramProps> = p.parseProgram();
 
-  it('checkParserErrros', () => {
-    const errors = p.Errors();
-    if (errors.length != 0) {
-      for (let i = 0; i < errors.length; i++) {
-        console.log('parser error: %s', errors[i]);
+    it('checkParserErrros', () => {
+      const errors = p.Errors();
+      if (errors.length != 0) {
+        for (let i = 0; i < errors.length; i++) {
+          console.log('parser error: %s', errors[i]);
+        }
       }
-    }
-    expect(errors.length).toBe(0);
-  });
+      expect(errors.length).toBe(0);
+    });
 
-  it('parseProgram', () => {
-    expect(program).not.toBe(null);
-    expect(program.statements.length).toBe(3);
-  });
+    it('parseProgram', () => {
+      expect(program).not.toBe(null);
+      expect(program.statements.length).toBe(1);
+    });
 
-  for (let i = 0; i < program.statements.length; i++) {
+    const stmt: ReturnStatement<ReturnStatementProps> | any =
+      program.statements[0];
+
     it('returnStatement', () => {
-      const stmt: ReturnStatement<ReturnStatementProps> | any =
-        program.statements[i];
-      expect(stmt.tokenLiteral()).toBe('return');
+      expect(stmt.token.literal).toBe('return');
+      expect(stmt.returnValue.value).toBe(test['expectedValue']);
     });
   }
 });
