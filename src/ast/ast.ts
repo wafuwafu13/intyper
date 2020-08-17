@@ -355,3 +355,40 @@ export class FunctionLiteral<T extends FunctionLiteralProps> {
     return statements.join('');
   }
 }
+
+export interface CallExpressionProps {
+  token: Token<TokenProps>;
+  fc: Identifier<IdentifierProps>;
+  arguments?: Identifier<IdentifierProps>[];
+}
+
+export class CallExpression<T extends CallExpressionProps> {
+  token: T['token'];
+  fc: T['fc'];
+  arguments?: T['arguments'];
+
+  constructor(token: T['token'], fc: T['fc']) {
+    this.token = token;
+    this.fc = fc;
+  }
+
+  tokenLiteral(): string | number {
+    return this.token.literal;
+  }
+
+  string(): string {
+    let statements = [];
+    let args = [];
+
+    for (const arg of this.arguments!) {
+      args.push(arg.string());
+    }
+
+    statements.push(this.fc.string());
+    statements.push('(');
+    statements.push(args.join(', '));
+    statements.push(')');
+
+    return statements.join('');
+  }
+}

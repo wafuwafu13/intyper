@@ -25,6 +25,8 @@ import {
   BlockStatementProps,
   FunctionLiteral,
   FunctionLiteralProps,
+  CallExpression,
+  CallExpressionProps,
 } from '../ast/ast';
 
 const LOWEST = 1;
@@ -33,7 +35,7 @@ const LESSGREATER = 3;
 const SUM = 4;
 const PRODUCT = 5;
 const PREFIX = 6;
-// const CALL = 7
+const CALL = 7;
 
 const precedences: { [token: string]: number } = {
   [TokenDef.EQ]: EQUALS,
@@ -44,6 +46,7 @@ const precedences: { [token: string]: number } = {
   [TokenDef.MINUS]: SUM,
   [TokenDef.SLASH]: PRODUCT,
   [TokenDef.ASTERISK]: PRODUCT,
+  [TokenDef.LPAREN]: CALL,
 };
 
 interface ParserProps {
@@ -63,10 +66,7 @@ interface ParserProps {
   >;
   infixParseFns: Map<
     string,
-    (
-      t: Token<TokenProps>,
-      left: Identifier<IdentifierProps>,
-    ) => InfixExpression<InfixExpressionProps>
+    (t: Token<TokenProps>, left: Identifier<IdentifierProps>) => any
   >;
 }
 
@@ -95,10 +95,7 @@ export class Parser<T extends ParserProps> {
     >(),
     infixParseFns: T['infixParseFns'] = new Map<
       string,
-      (
-        t: Token<TokenProps>,
-        left: Identifier<IdentifierProps>,
-      ) => InfixExpression<InfixExpressionProps>
+      (t: Token<TokenProps>, left: Identifier<IdentifierProps>) => any
     >(),
   ) {
     this.l = l;
@@ -129,6 +126,7 @@ export class Parser<T extends ParserProps> {
     this.registerInfix(TokenDef.NOT_EQ, this.parseInfixExpression);
     this.registerInfix(TokenDef.LT, this.parseInfixExpression);
     this.registerInfix(TokenDef.GT, this.parseInfixExpression);
+    this.registerInfix(TokenDef.LPAREN, this.parseCallExpression);
   }
 
   nextToken(): void {
@@ -150,10 +148,7 @@ export class Parser<T extends ParserProps> {
 
   registerInfix(
     tokenType: TokenType,
-    fn: (
-      t: Token<TokenProps>,
-      left: Identifier<IdentifierProps>,
-    ) => InfixExpression<InfixExpressionProps>,
+    fn: (t: Token<TokenProps>, left: Identifier<IdentifierProps>) => any,
   ): void {
     this.infixParseFns.set(tokenType, fn);
   }
@@ -431,6 +426,39 @@ export class Parser<T extends ParserProps> {
 
   parseBoolean(curToken: Token<TokenProps>): Boolean<BooleanProps> {
     return new Boolean(curToken, this.curTokenIs(TokenDef.TRUE));
+  }
+
+  parseCallExpression(
+    curToken: Token<TokenProps>,
+    fc: Identifier<IdentifierProps>,
+  ): CallExpression<CallExpressionProps> {
+    const exp = new CallExpression(curToken, fc);
+    exp.arguments = this.parseCallArguments();
+    return exp;
+  }
+
+  parseCallArguments(): Identifier<IdentifierProps>[] {
+    let args: Identifier<IdentifierProps>[] = [];
+
+    if (this.peekTokenIs(TokenDef.LPAREN)) {
+      this.nextToken();
+      return args;
+    }
+
+    this.nextToken();
+    args.push(this.parseExpression(LOWEST));
+
+    while (this.peekTokenIs(TokenDef.COMMA)) {
+      this.nextToken();
+      this.nextToken();
+      args.push(this.parseExpression(LOWEST));
+    }
+
+    if (!this.expectPeek(TokenDef.RPAREN)) {
+      return args;
+    }
+
+    return args;
   }
 
   peekPrecedence(): number {

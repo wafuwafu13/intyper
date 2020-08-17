@@ -437,6 +437,18 @@ describe('testOperatorPrecedenceParsing', () => {
       input: '!(true == true)',
       expected: '(!(true == true))',
     },
+    {
+      input: 'a + add(b * c) + d;',
+      expected: '((a + add((b * c))) + d)',
+    },
+    {
+      input: 'add(a, b, 1, 2 * 3, 4 + 5, add(6, 7 * 8));',
+      expected: 'add(a, b, 1, (2 * 3), (4 + 5), add(6, (7 * 8)))',
+    },
+    {
+      input: 'add(a + b + c * d / f + g);',
+      expected: 'add((((a + b) + ((c * d) / f)) + g))',
+    },
   ];
 
   for (const test of tests) {
@@ -623,4 +635,43 @@ describe('testFunctionParameterParsing', () => {
       }
     });
   }
+});
+
+describe('testCallExpressionParsing', () => {
+  const input = `add(1, 2 * 3, 4 + 5);`;
+
+  const l = new Lexer(input);
+  const p = new Parser(l);
+
+  const program = p.parseProgram();
+
+  it('checkParserErrros', () => {
+    const errors = p.Errors();
+    if (errors.length != 0) {
+      for (let i = 0; i < errors.length; i++) {
+        console.log('parser error: %s', errors[i]);
+      }
+    }
+    expect(errors.length).toBe(0);
+  });
+
+  it('parseProgram', () => {
+    expect(program).not.toBe(null);
+    expect(program.statements.length).toBe(1);
+  });
+
+  const exp: any = program.statements[0];
+
+  it('callExpressionParsing', () => {
+    expect(exp.expression.fc.value).toBe('add');
+    expect(exp.expression.arguments.length).toBe(3);
+
+    expect(exp.expression.arguments[0].value).toBe(1);
+    expect(exp.expression.arguments[1].left.value).toBe(2);
+    expect(exp.expression.arguments[1].operator).toBe('*');
+    expect(exp.expression.arguments[1].right.value).toBe(3);
+    expect(exp.expression.arguments[2].left.value).toBe(4);
+    expect(exp.expression.arguments[2].operator).toBe('+');
+    expect(exp.expression.arguments[2].right.value).toBe(5);
+  });
 });
