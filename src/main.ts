@@ -1,4 +1,5 @@
-import { Start } from '../src/repl/repl';
+import { StartLexer, StartParser } from '../src/repl/repl';
 
 // console.log(process.argv); TODO
-console.log(Start());
+console.log(StartLexer());
+console.log(StartParser());

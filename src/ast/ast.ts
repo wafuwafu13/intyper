@@ -23,12 +23,11 @@ export interface LetStatementProps {
 
 export class LetStatement<T extends LetStatementProps> {
   token: T['token'];
-  name: T['name'];
+  name?: T['name'];
   value?: T['value'];
 
   constructor(token: T['token']) {
     this.token = token;
-    this.name = name;
   }
 
   tokenLiteral(): string | number {
@@ -38,11 +37,11 @@ export class LetStatement<T extends LetStatementProps> {
   string(): string {
     let statements = [];
     statements.push(this.tokenLiteral() + ' ');
-    statements.push(this.name.value);
+    statements.push(this.name!.string());
     statements.push(' = ');
 
     if (this.value != null) {
-      statements.push(this.value.value);
+      statements.push(this.value.string());
     }
 
     statements.push(';');
