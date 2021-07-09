@@ -1,4 +1,4 @@
-import { Integer } from '../object/object';
+import { Integer, Boolean } from '../object/object';
 
 export const Eval = (node: any): any => {
   switch (node.constructor.name) {
@@ -8,6 +8,8 @@ export const Eval = (node: any): any => {
       return Eval(node.expression);
     case 'IntegerLiteral':
       return new Integer(node.value);
+    case 'Boolean':
+      return new Boolean(node.value);
   }
 
   return null;

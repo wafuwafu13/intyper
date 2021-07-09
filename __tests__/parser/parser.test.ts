@@ -398,6 +398,7 @@ describe('testOperatorPrecedenceParsing', () => {
       input: '3 + 4 * 5 == 3 * 1 + 4 * 5;',
       expected: '((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))',
     },
+    // TODO: セミコロンないと実行されない
     {
       input: 'true;',
       expected: 'true',

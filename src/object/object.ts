@@ -4,11 +4,6 @@ const INTEGER_OBJ = 'INTEGER';
 const BOOLEAN_OBJ = 'BOOLEAN';
 const NULL_OBJ = 'NULL';
 
-export interface Object {
-  type: () => ObjectType;
-  inspect: () => string;
-}
-
 interface IntegerProps {
   value: number;
 }

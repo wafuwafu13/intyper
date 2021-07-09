@@ -41,3 +41,35 @@ describe('testEvalIntegerExpression', () => {
     });
   }
 });
+
+const testBooleanObject = (obj: any, expected: boolean): boolean => {
+  if (obj.constructor.name != 'Boolean') {
+    console.log(`object is not Boolean. got ${obj.constructor.name}`);
+    return false;
+  }
+  if (obj.value != expected) {
+    console.log(`object has wrong value. got ${obj.value}, want ${expected}`);
+    return false;
+  }
+
+  return true;
+};
+
+describe('testBooelanExpression', () => {
+  const tests = [
+    {
+      input: 'true;',
+      expected: true,
+    },
+    {
+      input: 'false;',
+      expected: false,
+    },
+  ];
+  for (const test of tests) {
+    it('testEval', () => {
+      const evaluated = testEval(test.input);
+      expect(testBooleanObject(evaluated, test.expected)).toBe(true);
+    });
+  }
+});
