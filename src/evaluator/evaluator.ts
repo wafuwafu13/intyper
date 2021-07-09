@@ -19,6 +19,10 @@ export const Eval = (node: any): any => {
       const right = Eval(node.right);
       return evalInfixExpression(node.operator, left, right);
     }
+    case 'BlockStatement':
+      return evalStatements(node.statements);
+    case 'IfExpression':
+      return evalIfExpression(node);
   }
 
   return null;
@@ -106,5 +110,30 @@ const evalIntegerInfixExpression = (
       return new Boolean(leftVal != rightVal);
     default:
       return new Null();
+  }
+};
+
+const evalIfExpression = (ie: any): any => {
+  const condition = Eval(ie.condition);
+
+  if (isTruthy(condition)) {
+    return Eval(ie.consequence);
+  } else if (ie.alternative != null) {
+    return Eval(ie.alternative);
+  } else {
+    return new Null();
+  }
+};
+
+const isTruthy = (obj: any): any => {
+  switch (obj.value) {
+    case null:
+      return false;
+    case true:
+      return true;
+    case false:
+      return false;
+    default:
+      return true;
   }
 };

@@ -144,3 +144,42 @@ describe('testBangOperator', () => {
     });
   }
 });
+
+const testNullObject = (obj: any): boolean => {
+  if (obj.value != null) {
+    console.log(`object is not Null. got ${obj}`);
+    return false;
+  }
+  return true;
+};
+
+describe('testIfElseExpressions', () => {
+  const tests_1 = [
+    { input: 'if (true) { 10 }', expcted: 10 },
+    { input: 'if (1) { 10 }', expcted: 10 },
+    { input: 'if (1 < 2) { 10 }', expcted: 10 },
+    { input: 'if (1 > 2) { 10 } else { 20 }', expcted: 20 },
+    { input: 'if (1 < 2) { 10 } else { 20 }', expcted: 10 },
+  ];
+
+  for (const test of tests_1) {
+    const evaluated = testEval(test.input);
+
+    it('testEval', () => {
+      expect(testIntegerObject(evaluated, test.expcted)).toBe(true);
+    });
+  }
+
+  const tests_2 = [
+    { input: 'if (false) { 10 }', expcted: null },
+    { input: 'if (1 > 2) { 10 }', expcted: null },
+  ];
+
+  for (const test of tests_2) {
+    const evaluated = testEval(test.input);
+
+    it('testEval', () => {
+      expect(testNullObject(evaluated)).toBe(true);
+    });
+  }
+});
