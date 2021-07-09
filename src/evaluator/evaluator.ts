@@ -14,6 +14,11 @@ export const Eval = (node: any): any => {
       const right = Eval(node.right);
       return evalPrefixExpression(node.operator, right);
     }
+    case 'InfixExpression': {
+      const left = Eval(node.left);
+      const right = Eval(node.right);
+      return evalInfixExpression(node.operator, left, right);
+    }
   }
 
   return null;
@@ -59,4 +64,47 @@ const evalMinusPrefixOperatorExpression = (right: any): any => {
 
   const value = right.value;
   return new Integer(-value);
+};
+
+const evalInfixExpression = (operator: string, left: any, right: any): any => {
+  if (left.type() == INTEGER_OBJ && right.type() == INTEGER_OBJ) {
+    return evalIntegerInfixExpression(operator, left, right);
+  }
+  if (operator == '==') {
+    return new Boolean(left.value == right.value);
+  }
+  if (operator == '!=') {
+    return new Boolean(left.value != right.value);
+  }
+  return new Null();
+};
+
+const evalIntegerInfixExpression = (
+  operator: string,
+  left: any,
+  right: any,
+): any => {
+  const leftVal = left.value;
+  const rightVal = right.value;
+
+  switch (operator) {
+    case '+':
+      return new Integer(leftVal + rightVal);
+    case '-':
+      return new Integer(leftVal - rightVal);
+    case '*':
+      return new Integer(leftVal * rightVal);
+    case '/':
+      return new Integer(leftVal / rightVal);
+    case '<':
+      return new Boolean(leftVal < rightVal);
+    case '>':
+      return new Boolean(leftVal > rightVal);
+    case '==':
+      return new Boolean(leftVal == rightVal);
+    case '!=':
+      return new Boolean(leftVal != rightVal);
+    default:
+      return new Null();
+  }
 };
