@@ -1,4 +1,4 @@
-import { Integer, Boolean } from '../object/object';
+import { Integer, Boolean, Null, INTEGER_OBJ } from '../object/object';
 
 export const Eval = (node: any): any => {
   switch (node.constructor.name) {
@@ -10,6 +10,10 @@ export const Eval = (node: any): any => {
       return new Integer(node.value);
     case 'Boolean':
       return new Boolean(node.value);
+    case 'PrefixExpression': {
+      const right = Eval(node.right);
+      return evalPrefixExpression(node.operator, right);
+    }
   }
 
   return null;
@@ -22,4 +26,37 @@ const evalStatements = (stmts: any): any => {
   }
 
   return result;
+};
+
+const evalPrefixExpression = (operator: string, right: any): any => {
+  switch (operator) {
+    case '!':
+      return evalBangOperatorExpression(right);
+    case '-':
+      return evalMinusPrefixOperatorExpression(right);
+    default:
+      return new Null();
+  }
+};
+
+const evalBangOperatorExpression = (right: any): any => {
+  switch (right.value) {
+    case true:
+      return new Boolean(false);
+    case false:
+      return new Boolean(true);
+    case null:
+      return new Boolean(true);
+    default:
+      return new Boolean(false);
+  }
+};
+
+const evalMinusPrefixOperatorExpression = (right: any): any => {
+  if (right.type() != INTEGER_OBJ) {
+    return new Null();
+  }
+
+  const value = right.value;
+  return new Integer(-value);
 };

@@ -33,6 +33,14 @@ describe('testEvalIntegerExpression', () => {
       input: '10',
       expected: 10,
     },
+    {
+      input: '-5',
+      expected: -5,
+    },
+    {
+      input: '-10',
+      expected: -10,
+    },
   ];
   for (const test of tests) {
     it('testEval', () => {
@@ -64,6 +72,41 @@ describe('testBooelanExpression', () => {
     {
       input: 'false;',
       expected: false,
+    },
+  ];
+  for (const test of tests) {
+    it('testEval', () => {
+      const evaluated = testEval(test.input);
+      expect(testBooleanObject(evaluated, test.expected)).toBe(true);
+    });
+  }
+});
+
+describe('testBangOperator', () => {
+  const tests = [
+    {
+      input: '!true;',
+      expected: false,
+    },
+    {
+      input: '!false;',
+      expected: true,
+    },
+    {
+      input: '!5',
+      expected: false,
+    },
+    {
+      input: '!!true;',
+      expected: true,
+    },
+    {
+      input: '!!false;',
+      expected: false,
+    },
+    {
+      input: '!!5',
+      expected: true,
     },
   ];
   for (const test of tests) {
