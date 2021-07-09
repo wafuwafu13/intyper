@@ -1,8 +1,9 @@
 import { Lexer } from '../lexer/lexer';
 import { TokenDef } from '../token/token';
 import { Parser } from '../parser/parser';
+import { Eval } from '../evaluator/evaluator';
 
-const input = 'a + add(b * 1) + 2;';
+const input = '5';
 
 export const StartLexer = () => {
   const l = new Lexer(input);
@@ -24,6 +25,10 @@ export const StartParser = () => {
     printParseErrors(p.Errors());
   }
 
+  const evaluated = Eval(program);
+  if (evaluated != null) {
+    console.log(evaluated.inspect());
+  }
   console.log(program.statements[0].expression.string());
 };
 
