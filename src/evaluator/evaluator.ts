@@ -1,9 +1,16 @@
-import { Integer, Boolean, Null, INTEGER_OBJ } from '../object/object';
+import {
+  Integer,
+  Boolean,
+  Null,
+  ReturnValue,
+  INTEGER_OBJ,
+  RETURN_VALUE_OBJ,
+} from '../object/object';
 
 export const Eval = (node: any): any => {
   switch (node.constructor.name) {
     case 'Program':
-      return evalStatements(node.statements);
+      return evalProgram(node);
     case 'ExpressionStatement':
       return Eval(node.expression);
     case 'IntegerLiteral':
@@ -20,18 +27,39 @@ export const Eval = (node: any): any => {
       return evalInfixExpression(node.operator, left, right);
     }
     case 'BlockStatement':
-      return evalStatements(node.statements);
+      return evalBlockStatement(node);
     case 'IfExpression':
       return evalIfExpression(node);
+    case 'ReturnStatement': {
+      const val = Eval(node.returnValue);
+      return new ReturnValue(val);
+    }
   }
 
   return null;
 };
 
-const evalStatements = (stmts: any): any => {
+const evalProgram = (program: any): any => {
   let result: any;
-  for (const statement of stmts) {
+  for (const statement of program.statements) {
     result = Eval(statement);
+
+    if (result.constructor.name == 'ReturnValue') {
+      return result.value;
+    }
+  }
+
+  return result;
+};
+
+const evalBlockStatement = (block: any): any => {
+  let result: any;
+
+  for (const statement of block.statements) {
+    result = Eval(statement);
+    if (result != null && result.type() == RETURN_VALUE_OBJ) {
+      return result;
+    }
   }
 
   return result;

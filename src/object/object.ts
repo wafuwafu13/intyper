@@ -3,6 +3,7 @@ type ObjectType = string;
 export const INTEGER_OBJ = 'INTEGER';
 export const BOOLEAN_OBJ = 'BOOLEAN';
 export const NULL_OBJ = 'NULL';
+export const RETURN_VALUE_OBJ = 'RETURN_VALUE';
 
 interface IntegerProps {
   value: number;
@@ -51,5 +52,21 @@ export class Null {
 
   type(): ObjectType {
     return NULL_OBJ;
+  }
+}
+
+export class ReturnValue {
+  value: any;
+
+  constructor(value: any) {
+    this.value = value;
+  }
+
+  inspect(): void {
+    console.log(this.value.inspect());
+  }
+
+  type(): ObjectType {
+    return RETURN_VALUE_OBJ;
   }
 }
