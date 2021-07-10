@@ -4,6 +4,7 @@ export const INTEGER_OBJ = 'INTEGER';
 export const BOOLEAN_OBJ = 'BOOLEAN';
 export const NULL_OBJ = 'NULL';
 export const RETURN_VALUE_OBJ = 'RETURN_VALUE';
+export const ERROR_OBJ = 'ERROR';
 
 interface IntegerProps {
   value: number;
@@ -68,5 +69,21 @@ export class ReturnValue {
 
   type(): ObjectType {
     return RETURN_VALUE_OBJ;
+  }
+}
+
+export class Error {
+  message: string;
+
+  constructor(message: string) {
+    this.message = message;
+  }
+
+  inspect(): string {
+    return 'ERROR: ' + this.message;
+  }
+
+  type(): ObjectType {
+    return ERROR_OBJ;
   }
 }

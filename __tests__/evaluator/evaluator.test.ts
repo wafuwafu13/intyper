@@ -213,3 +213,58 @@ return 1;
     });
   }
 });
+
+describe('testErrorHandling', () => {
+  const tests = [
+    {
+      input: '5 + true;',
+      expectedMessage: 'type mismatch: INTEGER + BOOLEAN',
+    },
+    {
+      input: '5 + true; 5;',
+      expectedMessage: 'type mismatch: INTEGER + BOOLEAN',
+    },
+    {
+      input: '-true;',
+      expectedMessage: 'unknown operator: -BOOLEAN',
+    },
+    {
+      input: 'true + false;',
+      expectedMessage: 'unknown operator: BOOLEAN + BOOLEAN',
+    },
+    {
+      input: 'true + false + true + false;',
+      expectedMessage: 'unknown operator: BOOLEAN + BOOLEAN',
+    },
+    {
+      input: '5; true + false; 5',
+      expectedMessage: 'unknown operator: BOOLEAN + BOOLEAN',
+    },
+    {
+      input: 'if (10 > 1) { true + false; }',
+      expectedMessage: 'unknown operator: BOOLEAN + BOOLEAN',
+    },
+    {
+      input: `
+if (10 > 1) {
+if (10 > 1) {
+return true + false;
+}
+
+return 1;
+}
+`,
+      expectedMessage: 'unknown operator: BOOLEAN + BOOLEAN',
+    },
+  ];
+
+  for (const test of tests) {
+    const evaluated = testEval(test.input);
+    it('testObject', () => {
+      expect(evaluated.constructor.name).toBe('Error');
+    });
+    it('testEval', () => {
+      expect(evaluated.message).toBe(test.expectedMessage);
+    });
+  }
+});

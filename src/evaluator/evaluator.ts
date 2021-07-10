@@ -3,8 +3,10 @@ import {
   Boolean,
   Null,
   ReturnValue,
+  Error,
   INTEGER_OBJ,
   RETURN_VALUE_OBJ,
+  ERROR_OBJ,
 } from '../object/object';
 
 export const Eval = (node: any): any => {
@@ -19,11 +21,20 @@ export const Eval = (node: any): any => {
       return new Boolean(node.value);
     case 'PrefixExpression': {
       const right = Eval(node.right);
+      if (isError(right)) {
+        return right;
+      }
       return evalPrefixExpression(node.operator, right);
     }
     case 'InfixExpression': {
       const left = Eval(node.left);
+      if (isError(left)) {
+        return left;
+      }
       const right = Eval(node.right);
+      if (isError(right)) {
+        return right;
+      }
       return evalInfixExpression(node.operator, left, right);
     }
     case 'BlockStatement':
@@ -32,6 +43,9 @@ export const Eval = (node: any): any => {
       return evalIfExpression(node);
     case 'ReturnStatement': {
       const val = Eval(node.returnValue);
+      if (isError(val)) {
+        return val;
+      }
       return new ReturnValue(val);
     }
   }
@@ -44,8 +58,11 @@ const evalProgram = (program: any): any => {
   for (const statement of program.statements) {
     result = Eval(statement);
 
-    if (result.constructor.name == 'ReturnValue') {
-      return result.value;
+    switch (result.constructor.name) {
+      case 'ReturnValue':
+        return result.value;
+      case 'Error':
+        return result;
     }
   }
 
@@ -57,8 +74,11 @@ const evalBlockStatement = (block: any): any => {
 
   for (const statement of block.statements) {
     result = Eval(statement);
-    if (result != null && result.type() == RETURN_VALUE_OBJ) {
-      return result;
+    if (result != null) {
+      const rt = result.type();
+      if (rt == RETURN_VALUE_OBJ || rt == ERROR_OBJ) {
+        return result;
+      }
     }
   }
 
@@ -72,7 +92,7 @@ const evalPrefixExpression = (operator: string, right: any): any => {
     case '-':
       return evalMinusPrefixOperatorExpression(right);
     default:
-      return new Null();
+      return new Error(`unknown operator: ${operator}${right.type}`);
   }
 };
 
@@ -91,7 +111,7 @@ const evalBangOperatorExpression = (right: any): any => {
 
 const evalMinusPrefixOperatorExpression = (right: any): any => {
   if (right.type() != INTEGER_OBJ) {
-    return new Null();
+    return new Error(`unknown operator: -${right.type()}`);
   }
 
   const value = right.value;
@@ -108,7 +128,14 @@ const evalInfixExpression = (operator: string, left: any, right: any): any => {
   if (operator == '!=') {
     return new Boolean(left.value != right.value);
   }
-  return new Null();
+  if (left.type() != right.type()) {
+    return new Error(
+      `type mismatch: ${left.type()} ${operator} ${right.type()}`,
+    );
+  }
+  return new Error(
+    `unknown operator: ${left.type()} ${operator} ${right.type()}`,
+  );
 };
 
 const evalIntegerInfixExpression = (
@@ -137,12 +164,17 @@ const evalIntegerInfixExpression = (
     case '!=':
       return new Boolean(leftVal != rightVal);
     default:
-      return new Null();
+      return new Error(
+        `unknown operator: ${left.type()} ${operator} ${right.type()}`,
+      );
   }
 };
 
 const evalIfExpression = (ie: any): any => {
   const condition = Eval(ie.condition);
+  if (isError(condition)) {
+    return condition;
+  }
 
   if (isTruthy(condition)) {
     return Eval(ie.consequence);
@@ -164,4 +196,11 @@ const isTruthy = (obj: any): any => {
     default:
       return true;
   }
+};
+
+const isError = (obj: any): boolean => {
+  if (obj != null) {
+    return obj.type() == ERROR_OBJ;
+  }
+  return false;
 };
