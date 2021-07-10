@@ -2,6 +2,7 @@ import { Lexer } from '../lexer/lexer';
 import { TokenDef } from '../token/token';
 import { Parser } from '../parser/parser';
 import { Eval } from '../evaluator/evaluator';
+import { Environment } from '../object/environment';
 
 const input = '(5 + 10 * 2 + 15 / 3) * 2 + -10';
 
@@ -28,7 +29,10 @@ export const StartParser = () => {
     printParseErrors(p.Errors());
   }
 
-  const evaluated = Eval(program);
+  const store = new Map<string, any>();
+  const env = new Environment(store);
+
+  const evaluated = Eval(program, env);
   if (evaluated != null) {
     console.log(evaluated.inspect());
   }

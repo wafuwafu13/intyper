@@ -1,13 +1,17 @@
 import { Lexer } from '../../src/lexer/lexer';
 import { Eval } from '../../src/evaluator/evaluator';
 import { Parser } from '../../src/parser/parser';
+import { Environment } from '../../src/object/environment';
 
 const testEval = (input: string) => {
   const l = new Lexer(input);
   const p = new Parser(l);
   const program = p.parseProgram();
 
-  return Eval(program);
+  const store = new Map<string, any>();
+  const env = new Environment(store);
+
+  return Eval(program, env);
 };
 
 const testIntegerObject = (obj: any, expected: number): boolean => {
@@ -256,6 +260,10 @@ return 1;
 `,
       expectedMessage: 'unknown operator: BOOLEAN + BOOLEAN',
     },
+    {
+      input: 'foobar;',
+      expectedMessage: 'identifier not found: foobar',
+    },
   ];
 
   for (const test of tests) {
@@ -265,6 +273,21 @@ return 1;
     });
     it('testEval', () => {
       expect(evaluated.message).toBe(test.expectedMessage);
+    });
+  }
+});
+
+describe('testLetStatements', () => {
+  const tests = [
+    { input: 'let a = 5; a;', expected: 5 },
+    { input: 'let a = 5 * 5; a;', expected: 25 },
+    { input: 'let a = 5; let b = a; b;', expected: 5 },
+    { input: 'let a = 5; let b = a; let c = a + b + 5; c;', expected: 15 },
+  ];
+
+  for (const test of tests) {
+    it('testEval', () => {
+      expect(testIntegerObject(testEval(test.input), test.expected)).toBe(true);
     });
   }
 });

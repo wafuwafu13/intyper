@@ -1,3 +1,4 @@
+import { Environment } from '../object/environment';
 import {
   Integer,
   Boolean,
@@ -9,54 +10,63 @@ import {
   ERROR_OBJ,
 } from '../object/object';
 
-export const Eval = (node: any): any => {
+export const Eval = (node: any, env: Environment): any => {
   switch (node.constructor.name) {
     case 'Program':
-      return evalProgram(node);
+      return evalProgram(node, env);
     case 'ExpressionStatement':
-      return Eval(node.expression);
+      return Eval(node.expression, env);
     case 'IntegerLiteral':
       return new Integer(node.value);
     case 'Boolean':
       return new Boolean(node.value);
     case 'PrefixExpression': {
-      const right = Eval(node.right);
+      const right = Eval(node.right, env);
       if (isError(right)) {
         return right;
       }
       return evalPrefixExpression(node.operator, right);
     }
     case 'InfixExpression': {
-      const left = Eval(node.left);
+      const left = Eval(node.left, env);
       if (isError(left)) {
         return left;
       }
-      const right = Eval(node.right);
+      const right = Eval(node.right, env);
       if (isError(right)) {
         return right;
       }
       return evalInfixExpression(node.operator, left, right);
     }
     case 'BlockStatement':
-      return evalBlockStatement(node);
+      return evalBlockStatement(node, env);
     case 'IfExpression':
-      return evalIfExpression(node);
+      return evalIfExpression(node, env);
     case 'ReturnStatement': {
-      const val = Eval(node.returnValue);
+      const val = Eval(node.returnValue, env);
       if (isError(val)) {
         return val;
       }
       return new ReturnValue(val);
+    }
+    case 'Identifier':
+      return evalIdentifier(node, env);
+    case 'LetStatement': {
+      const val = Eval(node.value, env);
+      if (isError(val)) {
+        return val;
+      }
+      return env.set(node.name.value, val);
     }
   }
 
   return null;
 };
 
-const evalProgram = (program: any): any => {
+const evalProgram = (program: any, env: Environment): any => {
   let result: any;
   for (const statement of program.statements) {
-    result = Eval(statement);
+    result = Eval(statement, env);
 
     switch (result.constructor.name) {
       case 'ReturnValue':
@@ -69,11 +79,11 @@ const evalProgram = (program: any): any => {
   return result;
 };
 
-const evalBlockStatement = (block: any): any => {
+const evalBlockStatement = (block: any, env: Environment): any => {
   let result: any;
 
   for (const statement of block.statements) {
-    result = Eval(statement);
+    result = Eval(statement, env);
     if (result != null) {
       const rt = result.type();
       if (rt == RETURN_VALUE_OBJ || rt == ERROR_OBJ) {
@@ -170,19 +180,27 @@ const evalIntegerInfixExpression = (
   }
 };
 
-const evalIfExpression = (ie: any): any => {
-  const condition = Eval(ie.condition);
+const evalIfExpression = (ie: any, env: Environment): any => {
+  const condition = Eval(ie.condition, env);
   if (isError(condition)) {
     return condition;
   }
 
   if (isTruthy(condition)) {
-    return Eval(ie.consequence);
+    return Eval(ie.consequence, env);
   } else if (ie.alternative != null) {
-    return Eval(ie.alternative);
+    return Eval(ie.alternative, env);
   } else {
     return new Null();
   }
+};
+
+const evalIdentifier = (node: any, env: Environment): any => {
+  const val = env.get(node.value);
+  if (!val) {
+    return new Error(`identifier not found: ` + node.value);
+  }
+  return val;
 };
 
 const isTruthy = (obj: any): any => {
