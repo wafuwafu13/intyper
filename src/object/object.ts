@@ -3,12 +3,33 @@ import type { Environment } from './environment';
 
 type ObjectType = string;
 
+export const STRING_OBJ = 'STRING';
 export const INTEGER_OBJ = 'INTEGER';
 export const BOOLEAN_OBJ = 'BOOLEAN';
 export const NULL_OBJ = 'NULL';
 export const RETURN_VALUE_OBJ = 'RETURN_VALUE';
 export const FUNCTION_OBJ = 'FUNCTION';
 export const ERROR_OBJ = 'ERROR';
+
+interface StringProps {
+  value: string;
+}
+
+export class String<T extends StringProps> {
+  value: T['value'];
+
+  constructor(value: T['value']) {
+    this.value = value;
+  }
+
+  inspect(): string {
+    return this.value;
+  }
+
+  type(): ObjectType {
+    return STRING_OBJ;
+  }
+}
 
 interface IntegerProps {
   value: number;

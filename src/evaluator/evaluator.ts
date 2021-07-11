@@ -9,6 +9,7 @@ import {
   RETURN_VALUE_OBJ,
   ERROR_OBJ,
   Function,
+  String,
 } from '../object/object';
 
 export const Eval = (node: any, env: Environment): any => {
@@ -17,6 +18,8 @@ export const Eval = (node: any, env: Environment): any => {
       return evalProgram(node, env);
     case 'ExpressionStatement':
       return Eval(node.expression, env);
+    case 'StringLiteral':
+      return new String(node.value);
     case 'IntegerLiteral':
       return new Integer(node.value);
     case 'Boolean':

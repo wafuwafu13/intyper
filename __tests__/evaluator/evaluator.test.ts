@@ -14,6 +14,19 @@ const testEval = (input: string) => {
   return Eval(program, env);
 };
 
+describe('testStringLiteral', () => {
+  const input = `"Hello World!"`;
+  const evaluated = testEval(input);
+
+  it('testObject', () => {
+    expect(evaluated.constructor.name).toBe('String');
+  });
+
+  it('testEval', () => {
+    expect(evaluated.value).toBe('Hello World!');
+  });
+});
+
 const testIntegerObject = (obj: any, expected: number): boolean => {
   if (obj.constructor.name != 'Integer') {
     console.log(`object is not Integer. got ${obj.constructor.name}`);
