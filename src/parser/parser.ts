@@ -27,6 +27,7 @@ import {
   FunctionLiteralProps,
   CallExpression,
   CallExpressionProps,
+  StringLiteral,
 } from '../ast/ast';
 
 const LOWEST = 1;
@@ -109,6 +110,7 @@ export class Parser<T extends ParserProps> {
     this.nextToken();
 
     this.registerPrefix(TokenDef.IDENT, this.parseIdentifier);
+    this.registerPrefix(TokenDef.STRING, this.parseStringLiteral);
     this.registerPrefix(TokenDef.INT, this.parseIntegerLiteral);
     this.registerPrefix(TokenDef.BANG, this.parsePrefixExpression);
     this.registerPrefix(TokenDef.MINUS, this.parsePrefixExpression);
@@ -277,6 +279,10 @@ export class Parser<T extends ParserProps> {
 
   parseIdentifier(curToken: Token<TokenProps>): Identifier<IdentifierProps> {
     return new Identifier(curToken, curToken.literal);
+  }
+
+  parseStringLiteral() {
+    return new StringLiteral(this.curToken, this.curToken.literal as any);
   }
 
   parseIntegerLiteral(

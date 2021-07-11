@@ -206,6 +206,29 @@ export class Identifier<T extends IdentifierProps> {
   }
 }
 
+export interface StringLiteralProps {
+  token: Token<TokenProps>;
+  value?: string;
+}
+
+export class StringLiteral<T extends StringLiteralProps> {
+  token: T['token'];
+  value?: T['value'];
+
+  constructor(token: T['token'], value: T['value']) {
+    this.token = token;
+    this.value = value;
+  }
+
+  tokenLiteral(): string | number {
+    return this.token.literal;
+  }
+
+  string(): string | number {
+    return this.token.literal;
+  }
+}
+
 export interface IntegerLiteralProps {
   token: Token<TokenProps>;
   value?: number;

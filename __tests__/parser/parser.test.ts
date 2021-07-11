@@ -127,6 +127,38 @@ describe('testIdentifierExpression', () => {
   });
 });
 
+describe('testStringLiteralExpression', () => {
+  const input = '"hello world"';
+
+  const l = new Lexer(input);
+  const p = new Parser(l);
+
+  const program: Program<ProgramProps> = p.parseProgram();
+
+  it('checkParserErrros', () => {
+    const errors = p.Errors();
+    if (errors.length != 0) {
+      for (let i = 0; i < errors.length; i++) {
+        console.log('parser error: %s', errors[i]);
+      }
+    }
+    expect(errors.length).toBe(0);
+  });
+
+  it('parseProgram', () => {
+    expect(program).not.toBe(null);
+    expect(program.statements.length).toBe(1);
+  });
+
+  const literal: ExpressionStatement<ExpressionStatementProps> =
+    program.statements[0];
+
+  it('expressionIdentifier', () => {
+    expect(literal.expression!.value).toBe('hello world');
+    expect(literal.tokenLiteral()).toBe('hello world');
+  });
+});
+
 describe('testIntegerLiteralExpression', () => {
   const input = '5;';
 
