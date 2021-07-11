@@ -102,7 +102,7 @@ export class ExpressionStatement<T extends ExpressionStatementProps> {
 
   string(): string | number {
     if (this.expression != null) {
-      return this.expression.value;
+      return this.expression.string();
     }
     return '';
   }

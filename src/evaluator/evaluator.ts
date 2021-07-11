@@ -8,6 +8,7 @@ import {
   INTEGER_OBJ,
   RETURN_VALUE_OBJ,
   ERROR_OBJ,
+  Function,
 } from '../object/object';
 
 export const Eval = (node: any, env: Environment): any => {
@@ -58,6 +59,23 @@ export const Eval = (node: any, env: Environment): any => {
       }
       return env.set(node.name.value, val);
     }
+    case 'FunctionLiteral': {
+      const params = node.parameters;
+      const body = node.body;
+      return new Function(params, body, env);
+    }
+    case 'CallExpression': {
+      const objectFunction = Eval(node.fc, env);
+      if (isError(objectFunction)) {
+        return objectFunction;
+      }
+      const args = evalExpressions(node.arguments, env);
+      if (args.length == 1 && isError(args[0])) {
+        return args[0];
+      }
+
+      return applyFunction(objectFunction, args);
+    }
   }
 
   return null;
@@ -93,6 +111,48 @@ const evalBlockStatement = (block: any, env: Environment): any => {
   }
 
   return result;
+};
+
+const evalExpressions = (exps: any, env: Environment): any => {
+  let result: any = [];
+
+  for (const e of exps) {
+    const evaluated = Eval(e, env);
+    if (isError(evaluated)) {
+      return evaluated;
+    }
+    result.push(evaluated);
+  }
+
+  return result;
+};
+
+const applyFunction = (fn: any, args: any): any => {
+  if (fn.constructor.name != 'Function') {
+    return new Error(`not a function: ${fn.type()}`);
+  }
+
+  const extendedEnv = extendFunctionEnv(fn, args);
+  const evaluated = Eval(fn.body, extendedEnv);
+  return unwrapReturnValue(evaluated);
+};
+
+const extendFunctionEnv = (fn: any, args: any): Environment => {
+  const env = fn.env.newEnclosedEnvironment(fn.env);
+
+  fn.parameters.forEach((param: any, paramIdx: number) => {
+    env.set(param.value, args[paramIdx]);
+  });
+
+  return env;
+};
+
+const unwrapReturnValue = (obj: any): any => {
+  if (obj.constructor.name == 'ReturnValue') {
+    return obj.value;
+  }
+
+  return obj;
 };
 
 const evalPrefixExpression = (operator: string, right: any): any => {

@@ -291,3 +291,75 @@ describe('testLetStatements', () => {
     });
   }
 });
+
+describe('testFunctionObject', () => {
+  const input = 'fn(x) { x + 2; };';
+
+  const evaluated = testEval(input);
+  it('testObject', () => {
+    expect(evaluated.constructor.name).toBe('Function');
+  });
+  it('testParameter', () => {
+    expect(evaluated.parameters.length).toBe(1);
+    expect(evaluated.parameters[0].string()).toBe('x');
+  });
+
+  const expectedBody = '(x + 2)';
+
+  it('testBody', () => {
+    expect(evaluated.body.string()).toBe(expectedBody);
+  });
+});
+
+describe('testFunctionApplication', () => {
+  const tests = [
+    { input: 'let identity = fn(x) { x; }; identity(5);', expected: 5 },
+    { input: 'let identity = fn(x) { return x; }; identity(5);', expected: 5 },
+    { input: 'let double = fn(x) { x * 2; }; double(5);', expected: 10 },
+    { input: 'let add = fn(x, y) { x + y; }; add(5, 5);', expected: 10 },
+    {
+      input: 'let add = fn(x, y) { x + y; }; add(5 + 5, add(5, 5));',
+      expected: 20,
+    },
+    { input: 'fn(x) { x; }(5)', expected: 5 },
+  ];
+
+  for (const test of tests) {
+    it('testEval', () => {
+      expect(testIntegerObject(testEval(test.input), test.expected)).toBe(true);
+    });
+  }
+});
+
+describe('testEnclosingEnvironments', () => {
+  const input = `
+	let first = 10;
+	let second = 10;
+	let third = 10;
+	
+	let ourFunction = fn(first) {
+	  let second = 20;
+	
+	  first + second + third;
+	};
+	
+	ourFunction(20) + first + second;`;
+
+  it('testEval', () => {
+    expect(testIntegerObject(testEval(input), 70)).toBe(true);
+  });
+});
+
+describe('testClosures', () => {
+  const input = `
+	let newAdder = fn(x) {
+	  fn(y) { x + y };
+	};
+	
+	let addTwo = newAdder(2);
+	addTwo(2);`;
+
+  it('testEval', () => {
+    expect(testIntegerObject(testEval(input), 4)).toBe(true);
+  });
+});
