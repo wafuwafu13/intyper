@@ -58,6 +58,18 @@ export class Lexer<T extends LexerProps> {
     return this.input.slice(position, this.position);
   }
 
+  readString(): string {
+    const position = this.position + 1;
+    while (true) {
+      this.readChar();
+      if (this.ch == '"' || this.ch == 'EOF') {
+        break;
+      }
+    }
+
+    return this.input.slice(position, this.position);
+  }
+
   isLetter(ch: string | number): boolean {
     let flag: boolean;
     if (typeof ch === 'number') {
@@ -116,6 +128,9 @@ export class Lexer<T extends LexerProps> {
         } else {
           tok = this.newToken(TokenDef.ASSIGN, this.ch);
         }
+        break;
+      case '"':
+        tok = this.newToken(TokenDef.STRING, this.readString());
         break;
       case ';':
         tok = this.newToken(TokenDef.SEMICOLON, this.ch);

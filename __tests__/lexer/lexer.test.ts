@@ -21,6 +21,8 @@ if (5 < 10) {
 
 10 == 10;
 10 != 9;
+"foobar"
+"foo bar"
 `;
 
 const tests: { [expectedType: string]: string }[] = [
@@ -97,6 +99,8 @@ const tests: { [expectedType: string]: string }[] = [
   { [TokenDef.NOT_EQ]: '!=' },
   { [TokenDef.INT]: '9' },
   { [TokenDef.SEMICOLON]: ';' },
+  { [TokenDef.STRING]: 'foobar' },
+  { [TokenDef.STRING]: 'foo bar' },
   { [TokenDef.EOF]: '' },
 ];
 

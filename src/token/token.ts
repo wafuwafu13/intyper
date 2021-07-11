@@ -21,6 +21,8 @@ export namespace TokenDef {
   export const ILLEGAL = 'ILLEGAL';
   export const EOF = 'EOF';
 
+  export const STRING = 'STRING';
+
   export const IDENT = 'IDENT';
   export const INT = 'INT';
 
