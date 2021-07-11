@@ -277,6 +277,10 @@ return 1;
       input: 'foobar;',
       expectedMessage: 'identifier not found: foobar',
     },
+    {
+      input: '"Hello" - "World"',
+      expectedMessage: 'unknown operator: STRING - STRING',
+    },
   ];
 
   for (const test of tests) {
@@ -374,5 +378,18 @@ describe('testClosures', () => {
 
   it('testEval', () => {
     expect(testIntegerObject(testEval(input), 4)).toBe(true);
+  });
+});
+
+describe('testStringConcatenation', () => {
+  const input = `"Hello" + " " + "World!"`;
+
+  const evaluated = testEval(input);
+
+  it('testObject', () => {
+    expect(evaluated.constructor.name).toBe('String');
+  });
+  it('testEval', () => {
+    expect(evaluated.value).toBe('Hello World!');
   });
 });

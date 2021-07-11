@@ -10,6 +10,7 @@ import {
   ERROR_OBJ,
   Function,
   String,
+  STRING_OBJ,
 } from '../object/object';
 
 export const Eval = (node: any, env: Environment): any => {
@@ -206,9 +207,28 @@ const evalInfixExpression = (operator: string, left: any, right: any): any => {
       `type mismatch: ${left.type()} ${operator} ${right.type()}`,
     );
   }
+  if (left.type() == STRING_OBJ && right.type() == STRING_OBJ) {
+    return evalStringInfixExpression(operator, left, right);
+  }
   return new Error(
     `unknown operator: ${left.type()} ${operator} ${right.type()}`,
   );
+};
+
+const evalStringInfixExpression = (
+  operator: string,
+  left: any,
+  right: any,
+): any => {
+  if (operator != '+') {
+    return new Error(
+      `unknown operator: ${left.type()} ${operator} ${right.type()}`,
+    );
+  }
+  const leftVal = left.value;
+  const rightVal = right.value;
+
+  return new String(leftVal + rightVal);
 };
 
 const evalIntegerInfixExpression = (
