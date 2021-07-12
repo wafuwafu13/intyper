@@ -9,6 +9,7 @@ export const BOOLEAN_OBJ = 'BOOLEAN';
 export const NULL_OBJ = 'NULL';
 export const RETURN_VALUE_OBJ = 'RETURN_VALUE';
 export const FUNCTION_OBJ = 'FUNCTION';
+export const BUILTIN_OBJ = 'BUILTIN';
 export const ERROR_OBJ = 'ERROR';
 
 interface StringProps {
@@ -132,6 +133,22 @@ export class Function {
 
   type(): ObjectType {
     return FUNCTION_OBJ;
+  }
+}
+
+export class Builtin {
+  fn: (...args: any) => any;
+
+  constructor(fn: (...args: any) => any) {
+    this.fn = fn;
+  }
+
+  inspect(): string {
+    return 'builtin function';
+  }
+
+  type(): ObjectType {
+    return BUILTIN_OBJ;
   }
 }
 

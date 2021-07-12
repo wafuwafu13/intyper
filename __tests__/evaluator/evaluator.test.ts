@@ -393,3 +393,39 @@ describe('testStringConcatenation', () => {
     expect(evaluated.value).toBe('Hello World!');
   });
 });
+
+describe('testBuiltinFunctions', () => {
+  const test_1 = [
+    { input: `len("")`, expected: 0 },
+    { input: `len("four")`, expected: 4 },
+    { input: `len("hello world")`, expected: 11 },
+  ];
+
+  for (const test of test_1) {
+    const evaluated = testEval(test.input);
+
+    it('testEval', () => {
+      expect(testIntegerObject(evaluated, test.expected)).toBe(true);
+    });
+  }
+
+  const test_2 = [
+    {
+      input: `len(1)`,
+      expected: 'argument to `len` not supported, got INTEGER',
+    },
+    {
+      input: `len("one", "two")`,
+      expected: 'wrong number of arguments. got=2, want=1',
+    },
+  ];
+
+  for (const test of test_2) {
+    const evaluated = testEval(test.input);
+
+    it('testObject', () => {
+      expect(evaluated.constructor.name).toBe('Error');
+      expect(evaluated.message).toBe(test.expected);
+    });
+  }
+});

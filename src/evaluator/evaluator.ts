@@ -1,4 +1,5 @@
 import { Environment } from '../object/environment';
+import { builtins } from './builtins';
 import {
   Integer,
   Boolean,
@@ -132,13 +133,18 @@ const evalExpressions = (exps: any, env: Environment): any => {
 };
 
 const applyFunction = (fn: any, args: any): any => {
-  if (fn.constructor.name != 'Function') {
-    return new Error(`not a function: ${fn.type()}`);
+  switch (fn.constructor.name) {
+    case 'Function': {
+      const extendedEnv = extendFunctionEnv(fn, args);
+      const evaluated = Eval(fn.body, extendedEnv);
+      return unwrapReturnValue(evaluated);
+    }
+    case 'Builtin': {
+      return fn.fn(...args);
+    }
+    default:
+      return new Error(`not a function: ${fn.type()}`);
   }
-
-  const extendedEnv = extendFunctionEnv(fn, args);
-  const evaluated = Eval(fn.body, extendedEnv);
-  return unwrapReturnValue(evaluated);
 };
 
 const extendFunctionEnv = (fn: any, args: any): Environment => {
@@ -280,10 +286,12 @@ const evalIfExpression = (ie: any, env: Environment): any => {
 
 const evalIdentifier = (node: any, env: Environment): any => {
   const val = env.get(node.value);
-  if (!val) {
+  const builtin = (builtins as any)[node.value];
+  if (!val && !builtin) {
     return new Error(`identifier not found: ` + node.value);
   }
-  return val;
+  if (val) return val;
+  if (builtin) return builtin;
 };
 
 const isTruthy = (obj: any): any => {
