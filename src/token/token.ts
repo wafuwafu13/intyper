@@ -46,6 +46,8 @@ export namespace TokenDef {
   export const RPAREN = ')';
   export const LBRACE = '{';
   export const RBRACE = '}';
+  export const LBRACKET = '[';
+  export const RBRACKET = ']';
 
   export const FUNCTION = 'FUNCTION';
   export const LET = 'LET';

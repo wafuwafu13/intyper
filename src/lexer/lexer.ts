@@ -178,6 +178,12 @@ export class Lexer<T extends LexerProps> {
       case '}':
         tok = this.newToken(TokenDef.RBRACE, this.ch);
         break;
+      case '[':
+        tok = this.newToken(TokenDef.LBRACKET, this.ch);
+        break;
+      case ']':
+        tok = this.newToken(TokenDef.RBRACKET, this.ch);
+        break;
       case 'EOF':
         tok = this.newToken(TokenDef.EOF, '');
         break;

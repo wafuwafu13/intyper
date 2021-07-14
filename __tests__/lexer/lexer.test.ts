@@ -23,6 +23,7 @@ if (5 < 10) {
 10 != 9;
 "foobar"
 "foo bar"
+[1, 2];
 `;
 
 const tests: { [expectedType: string]: string }[] = [
@@ -101,6 +102,12 @@ const tests: { [expectedType: string]: string }[] = [
   { [TokenDef.SEMICOLON]: ';' },
   { [TokenDef.STRING]: 'foobar' },
   { [TokenDef.STRING]: 'foo bar' },
+  { [TokenDef.LBRACKET]: '[' },
+  { [TokenDef.INT]: '1' },
+  { [TokenDef.COMMA]: ',' },
+  { [TokenDef.INT]: '2' },
+  { [TokenDef.RBRACKET]: ']' },
+  { [TokenDef.SEMICOLON]: ';' },
   { [TokenDef.EOF]: '' },
 ];
 
