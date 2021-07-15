@@ -13,6 +13,7 @@ import {
   String,
   STRING_OBJ,
   Array,
+  ARRAY_OBJ,
 } from '../object/object';
 
 export const Eval = (node: any, env: Environment): any => {
@@ -88,6 +89,18 @@ export const Eval = (node: any, env: Environment): any => {
         return elements[0];
       }
       return new Array(elements);
+    }
+    case 'IndexExpression': {
+      const left = Eval(node.left, env);
+      if (isError(left)) {
+        return left;
+      }
+      const index = Eval(node.index, env);
+      if (isError(index)) {
+        return index;
+      }
+
+      return evalIndexExpression(left, index);
     }
   }
 
@@ -300,6 +313,25 @@ const evalIdentifier = (node: any, env: Environment): any => {
   }
   if (val) return val;
   if (builtin) return builtin;
+};
+
+const evalIndexExpression = (left: any, index: any): any => {
+  if (left.type() == ARRAY_OBJ && index.type() == INTEGER_OBJ) {
+    return evalArrayIndexExpression(left, index);
+  } else {
+    return new Error(`index operator not supported: ${left.type()}`);
+  }
+};
+
+const evalArrayIndexExpression = (array: any, index: any): any => {
+  const idx = index.value;
+  const max = array.elements.length - 1;
+
+  if (idx < 0 || idx > max) {
+    return null;
+  }
+
+  return array.elements[idx];
 };
 
 const isTruthy = (obj: any): any => {
