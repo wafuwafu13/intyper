@@ -29,6 +29,7 @@ import {
   CallExpressionProps,
   StringLiteral,
   ArrayLteral,
+  IndexExpression,
 } from '../ast/ast';
 
 const LOWEST = 1;
@@ -38,6 +39,7 @@ const SUM = 4;
 const PRODUCT = 5;
 const PREFIX = 6;
 const CALL = 7;
+const INDEX = 8;
 
 const precedences: { [token: string]: number } = {
   [TokenDef.EQ]: EQUALS,
@@ -49,6 +51,7 @@ const precedences: { [token: string]: number } = {
   [TokenDef.SLASH]: PRODUCT,
   [TokenDef.ASTERISK]: PRODUCT,
   [TokenDef.LPAREN]: CALL,
+  [TokenDef.LBRACKET]: INDEX,
 };
 
 interface ParserProps {
@@ -131,6 +134,7 @@ export class Parser<T extends ParserProps> {
     this.registerInfix(TokenDef.LT, this.parseInfixExpression);
     this.registerInfix(TokenDef.GT, this.parseInfixExpression);
     this.registerInfix(TokenDef.LPAREN, this.parseCallExpression);
+    this.registerInfix(TokenDef.LBRACKET, this.parseIndexExpression);
   }
 
   nextToken(): void {
@@ -504,6 +508,22 @@ export class Parser<T extends ParserProps> {
     }
 
     return list;
+  }
+
+  parseIndexExpression(
+    t: Token<TokenProps>,
+    left: Identifier<IdentifierProps>,
+  ): any {
+    const exp = new IndexExpression(this.curToken, left);
+
+    this.nextToken();
+    exp.index = this.parseExpression(LOWEST);
+
+    if (!this.expectPeek(TokenDef.RBRACKET)) {
+      return t;
+    }
+
+    return exp;
   }
 
   peekPrecedence(): number {

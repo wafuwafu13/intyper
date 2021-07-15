@@ -445,3 +445,36 @@ export class ArrayLteral<T extends ArrayLiteralProps> {
     return statements.join('');
   }
 }
+
+export interface IndexExpressionProps {
+  token: Token<TokenProps>;
+  left: Identifier<IdentifierProps>;
+  index: Identifier<IdentifierProps>;
+}
+
+export class IndexExpression<T extends IndexExpressionProps> {
+  token: T['token'];
+  left: T['left'];
+  index?: T['index'];
+
+  constructor(token: T['token'], left: T['left']) {
+    this.token = token;
+    this.left = left;
+  }
+
+  tokenLiteral(): string | number {
+    return this.token.literal;
+  }
+
+  string(): string {
+    let statements = [];
+
+    statements.push('(');
+    statements.push(this.left.string());
+    statements.push('[');
+    statements.push(this.index!.string());
+    statements.push('])');
+
+    return statements.join('');
+  }
+}
