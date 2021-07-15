@@ -429,3 +429,20 @@ describe('testBuiltinFunctions', () => {
     });
   }
 });
+
+describe('testArrayLiterals', () => {
+  const input = '[1, 2 * 2, 3 + 3]';
+
+  const evaluated = testEval(input);
+
+  it('testObject', () => {
+    expect(evaluated.constructor.name).toBe('Array');
+  });
+
+  it('testEval', () => {
+    expect(evaluated.elements.length).toBe(3);
+    expect(testIntegerObject(evaluated.elements[0], 1)).toBe(true);
+    expect(testIntegerObject(evaluated.elements[1], 4)).toBe(true);
+    expect(testIntegerObject(evaluated.elements[2], 6)).toBe(true);
+  });
+});

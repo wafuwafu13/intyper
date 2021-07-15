@@ -28,7 +28,7 @@ import {
   CallExpression,
   CallExpressionProps,
   StringLiteral,
-  ArrayLteral,
+  ArrayLiteral,
   IndexExpression,
 } from '../ast/ast';
 
@@ -480,7 +480,7 @@ export class Parser<T extends ParserProps> {
   }
 
   parseArrayLiteral(): any {
-    const array = new ArrayLteral(this.curToken);
+    const array = new ArrayLiteral(this.curToken);
     array.elements = this.parseExpressionList(TokenDef.RBRACKET);
 
     return array;

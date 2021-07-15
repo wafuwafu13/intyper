@@ -10,6 +10,7 @@ export const NULL_OBJ = 'NULL';
 export const RETURN_VALUE_OBJ = 'RETURN_VALUE';
 export const FUNCTION_OBJ = 'FUNCTION';
 export const BUILTIN_OBJ = 'BUILTIN';
+export const ARRAY_OBJ = 'ARRAY';
 export const ERROR_OBJ = 'ERROR';
 
 interface StringProps {
@@ -149,6 +150,33 @@ export class Builtin {
 
   type(): ObjectType {
     return BUILTIN_OBJ;
+  }
+}
+
+export class Array {
+  elements: any[];
+
+  constructor(elements: any[]) {
+    this.elements = elements;
+  }
+
+  inspect(): string {
+    let out: string[] = [];
+    let elements: string[] = [];
+
+    for (const e of this.elements) {
+      elements.push(e.inspect());
+    }
+
+    out.push('[');
+    out.push(elements.join(''));
+    out.push(']');
+
+    return out.join('');
+  }
+
+  type(): ObjectType {
+    return ARRAY_OBJ;
   }
 }
 

@@ -12,6 +12,7 @@ import {
   Function,
   String,
   STRING_OBJ,
+  Array,
 } from '../object/object';
 
 export const Eval = (node: any, env: Environment): any => {
@@ -80,6 +81,13 @@ export const Eval = (node: any, env: Environment): any => {
       }
 
       return applyFunction(objectFunction, args);
+    }
+    case 'ArrayLiteral': {
+      const elements = evalExpressions(node.elements, env);
+      if (elements.length == 1 && isError(elements[0])) {
+        return elements[0];
+      }
+      return new Array(elements);
     }
   }
 

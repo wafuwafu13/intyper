@@ -420,7 +420,7 @@ export interface ArrayLiteralProps {
   elements: any[];
 }
 
-export class ArrayLteral<T extends ArrayLiteralProps> {
+export class ArrayLiteral<T extends ArrayLiteralProps> {
   token: T['token'];
   elements?: T['elements'];
 
