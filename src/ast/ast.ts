@@ -414,3 +414,34 @@ export class CallExpression<T extends CallExpressionProps> {
     return statements.join('');
   }
 }
+
+export interface ArrayLiteralProps {
+  token: Token<TokenProps>;
+  elements: any[];
+}
+
+export class ArrayLteral<T extends ArrayLiteralProps> {
+  token: T['token'];
+  elements?: T['elements'];
+
+  constructor(token: T['token']) {
+    this.token = token;
+  }
+
+  tokenLiteral(): string | number {
+    return this.token.literal;
+  }
+
+  string(): string {
+    let statements = [];
+    let elements = [];
+    for (const el of this.elements!) {
+      elements.push(el.string());
+    }
+    statements.push('[');
+    statements.push(elements.join(', '));
+    statements.push(']');
+
+    return statements.join('');
+  }
+}

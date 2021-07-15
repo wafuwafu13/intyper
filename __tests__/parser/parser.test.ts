@@ -713,3 +713,39 @@ describe('testCallExpressionParsing', () => {
     expect(exp.expression.arguments[2].right.value).toBe(5);
   });
 });
+
+describe('testParsingArrayLiterals', () => {
+  const input = '[1, 2 * 2, 3 + 3]';
+
+  const l = new Lexer(input);
+  const p = new Parser(l);
+  const program = p.parseProgram();
+
+  it('checkParserErrros', () => {
+    const errors = p.Errors();
+    if (errors.length != 0) {
+      for (let i = 0; i < errors.length; i++) {
+        console.log('parser error: %s', errors[i]);
+      }
+    }
+    expect(errors.length).toBe(0);
+  });
+
+  it('parseProgram', () => {
+    expect(program).not.toBe(null);
+    expect(program.statements.length).toBe(1);
+  });
+
+  const array: any = program.statements[0];
+
+  it('parsingArrayLiterals', () => {
+    expect(array.expression.elements.length).toBe(3);
+    expect(array.expression.elements[0].value).toBe(1);
+    expect(array.expression.elements[1].left.value).toBe(2);
+    expect(array.expression.elements[1].operator).toBe('*');
+    expect(array.expression.elements[1].right.value).toBe(2);
+    expect(array.expression.elements[2].left.value).toBe(3);
+    expect(array.expression.elements[2].operator).toBe('+');
+    expect(array.expression.elements[2].right.value).toBe(3);
+  });
+});

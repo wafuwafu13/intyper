@@ -28,6 +28,7 @@ import {
   CallExpression,
   CallExpressionProps,
   StringLiteral,
+  ArrayLteral,
 } from '../ast/ast';
 
 const LOWEST = 1;
@@ -119,6 +120,7 @@ export class Parser<T extends ParserProps> {
     this.registerPrefix(TokenDef.LPAREN, this.parseGroupedExpression);
     this.registerPrefix(TokenDef.IF, this.parseIfExpression);
     this.registerPrefix(TokenDef.FUNCTION, this.parseFunctionLiteral);
+    this.registerPrefix(TokenDef.LBRACKET, this.parseArrayLiteral);
 
     this.registerInfix(TokenDef.PLUS, this.parseInfixExpression);
     this.registerInfix(TokenDef.MINUS, this.parseInfixExpression);
@@ -445,7 +447,7 @@ export class Parser<T extends ParserProps> {
     fc: Identifier<IdentifierProps>,
   ): CallExpression<CallExpressionProps> {
     const exp = new CallExpression(curToken, fc);
-    exp.arguments = this.parseCallArguments();
+    exp.arguments = this.parseExpressionList(TokenDef.RPAREN);
     return exp;
   }
 
@@ -471,6 +473,37 @@ export class Parser<T extends ParserProps> {
     }
 
     return args;
+  }
+
+  parseArrayLiteral(): any {
+    const array = new ArrayLteral(this.curToken);
+    array.elements = this.parseExpressionList(TokenDef.RBRACKET);
+
+    return array;
+  }
+
+  parseExpressionList(end: TokenType): any {
+    let list: any[] = [];
+
+    if (this.peekTokenIs(end)) {
+      this.nextToken();
+      return list;
+    }
+
+    this.nextToken();
+    list.push(this.parseExpression(LOWEST));
+
+    while (this.peekTokenIs(TokenDef.COMMA)) {
+      this.nextToken();
+      this.nextToken();
+      list.push(this.parseExpression(LOWEST));
+    }
+
+    if (!this.expectPeek(end)) {
+      return null;
+    }
+
+    return list;
   }
 
   peekPrecedence(): number {
