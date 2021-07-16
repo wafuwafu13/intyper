@@ -30,6 +30,7 @@ import {
   StringLiteral,
   ArrayLiteral,
   IndexExpression,
+  HashLiteral,
 } from '../ast/ast';
 
 const LOWEST = 1;
@@ -124,6 +125,7 @@ export class Parser<T extends ParserProps> {
     this.registerPrefix(TokenDef.IF, this.parseIfExpression);
     this.registerPrefix(TokenDef.FUNCTION, this.parseFunctionLiteral);
     this.registerPrefix(TokenDef.LBRACKET, this.parseArrayLiteral);
+    this.registerPrefix(TokenDef.LBRACE, this.parseHashLiteral);
 
     this.registerInfix(TokenDef.PLUS, this.parseInfixExpression);
     this.registerInfix(TokenDef.MINUS, this.parseInfixExpression);
@@ -524,6 +526,41 @@ export class Parser<T extends ParserProps> {
     }
 
     return exp;
+  }
+
+  parseHashLiteral(): any {
+    const hash = new HashLiteral(this.curToken);
+    hash.pairs = new Map<
+      Identifier<IdentifierProps>,
+      Identifier<IdentifierProps>
+    >();
+
+    while (!this.peekTokenIs(TokenDef.RBRACE)) {
+      this.nextToken();
+      const key = this.parseExpression(LOWEST);
+
+      if (!this.expectPeek(TokenDef.COLON)) {
+        return null;
+      }
+
+      this.nextToken();
+      const value = this.parseExpression(LOWEST);
+
+      hash.pairs.set(key, value);
+
+      if (
+        !this.peekTokenIs(TokenDef.RBRACE) &&
+        !this.expectPeek(TokenDef.COMMA)
+      ) {
+        return null;
+      }
+    }
+
+    if (!this.expectPeek(TokenDef.RBRACE)) {
+      return null;
+    }
+
+    return hash;
   }
 
   peekPrecedence(): number {

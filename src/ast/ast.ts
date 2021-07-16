@@ -478,3 +478,36 @@ export class IndexExpression<T extends IndexExpressionProps> {
     return statements.join('');
   }
 }
+
+export interface HashLiteralProps {
+  token: Token<TokenProps>;
+  pairs: Map<Identifier<IdentifierProps>, Identifier<IdentifierProps>>;
+}
+
+export class HashLiteral<T extends HashLiteralProps> {
+  token: T['token'];
+  pairs?: T['pairs'];
+
+  constructor(token: T['token']) {
+    this.token = token;
+  }
+
+  tokenLiteral(): string | number {
+    return this.token.literal;
+  }
+
+  string(): string {
+    let statements = [];
+    let pairs = [];
+
+    for (const [key, value] of this.pairs!) {
+      pairs.push(key.string() + ':' + value.string());
+    }
+
+    statements.push('{');
+    statements.push(pairs.join(', '));
+    statements.push('}');
+
+    return statements.join('');
+  }
+}

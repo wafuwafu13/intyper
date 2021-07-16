@@ -788,3 +788,111 @@ describe('testParsingIndexExpressions', () => {
     expect(indexExp.expression.index.right.value).toBe(1);
   });
 });
+
+describe('testParsingHashLiteralsStringKeys', () => {
+  const input = `{"one": 1, "two": 2, "three": 3}`;
+
+  const l = new Lexer(input);
+  const p = new Parser(l);
+  const program = p.parseProgram();
+
+  it('checkParserErrros', () => {
+    const errors = p.Errors();
+    if (errors.length != 0) {
+      for (let i = 0; i < errors.length; i++) {
+        console.log('parser error: %s', errors[i]);
+      }
+    }
+    expect(errors.length).toBe(0);
+  });
+
+  it('parseProgram', () => {
+    expect(program).not.toBe(null);
+    expect(program.statements.length).toBe(1);
+  });
+
+  const hash: any = program.statements[0];
+  it('hashLength', () => {
+    expect(hash.expression.pairs.size).toBe(3);
+  });
+
+  const expected: any = {
+    one: 1,
+    two: 2,
+    three: 3,
+  };
+
+  for (const [key, value] of hash.expression.pairs) {
+    const expectedValue: any = expected[key.string()];
+    expect(value.value).toBe(expectedValue);
+  }
+});
+
+describe('testParsingEmptyHashLiteral', () => {
+  const input = `{}`;
+
+  const l = new Lexer(input);
+  const p = new Parser(l);
+  const program = p.parseProgram();
+
+  it('checkParserErrros', () => {
+    const errors = p.Errors();
+    if (errors.length != 0) {
+      for (let i = 0; i < errors.length; i++) {
+        console.log('parser error: %s', errors[i]);
+      }
+    }
+    expect(errors.length).toBe(0);
+  });
+
+  it('parseProgram', () => {
+    expect(program).not.toBe(null);
+    expect(program.statements.length).toBe(1);
+  });
+
+  const hash: any = program.statements[0];
+  it('hashLength', () => {
+    expect(hash.expression.pairs.size).toBe(0);
+  });
+});
+
+describe('testParsingHashLiteralsWithExpressions', () => {
+  const input = `{"one": 0 + 1, "two": 10 - 8, "three": 15 / 5}`;
+
+  const l = new Lexer(input);
+  const p = new Parser(l);
+  const program = p.parseProgram();
+
+  it('checkParserErrros', () => {
+    const errors = p.Errors();
+    if (errors.length != 0) {
+      for (let i = 0; i < errors.length; i++) {
+        console.log('parser error: %s', errors[i]);
+      }
+    }
+    expect(errors.length).toBe(0);
+  });
+
+  it('parseProgram', () => {
+    expect(program).not.toBe(null);
+    expect(program.statements.length).toBe(1);
+  });
+
+  const hash: any = program.statements[0];
+  it('hashLength', () => {
+    expect(hash.expression.pairs.size).toBe(3);
+  });
+
+  const expected: any = {
+    one: [0, '+', 1],
+    two: [10, '-', 8],
+    three: [15, '/', 5],
+  };
+
+  for (const [key, value] of hash.expression.pairs) {
+    const expectedValue: any = expected[key.string()];
+    expect(value.left.value).toBe(expectedValue[0]);
+    expect(value.operator).toBe(expectedValue[1]);
+    expect(value.right.value).toBe(expectedValue[2]);
+  }
+});
