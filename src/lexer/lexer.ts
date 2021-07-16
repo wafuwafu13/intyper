@@ -132,6 +132,9 @@ export class Lexer<T extends LexerProps> {
       case '"':
         tok = this.newToken(TokenDef.STRING, this.readString());
         break;
+      case ':':
+        tok = this.newToken(TokenDef.COLON, this.ch);
+        break;
       case ';':
         tok = this.newToken(TokenDef.SEMICOLON, this.ch);
         break;

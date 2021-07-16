@@ -24,6 +24,7 @@ if (5 < 10) {
 "foobar"
 "foo bar"
 [1, 2];
+{"foo": "bar"}
 `;
 
 const tests: { [expectedType: string]: string }[] = [
@@ -108,6 +109,11 @@ const tests: { [expectedType: string]: string }[] = [
   { [TokenDef.INT]: '2' },
   { [TokenDef.RBRACKET]: ']' },
   { [TokenDef.SEMICOLON]: ';' },
+  { [TokenDef.LBRACE]: '{' },
+  { [TokenDef.STRING]: 'foo' },
+  { [TokenDef.COLON]: ':' },
+  { [TokenDef.STRING]: 'bar' },
+  { [TokenDef.RBRACE]: '}' },
   { [TokenDef.EOF]: '' },
 ];
 

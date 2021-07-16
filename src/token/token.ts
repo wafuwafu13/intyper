@@ -40,6 +40,7 @@ export namespace TokenDef {
   export const NOT_EQ = '!=';
 
   export const COMMA = ',';
+  export const COLON = ':';
   export const SEMICOLON = ';';
 
   export const LPAREN = '(';
