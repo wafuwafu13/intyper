@@ -15,6 +15,7 @@ import {
   Array,
   ARRAY_OBJ,
   Hash,
+  HASH_OBJ,
 } from '../object/object';
 
 export const Eval = (node: any, env: Environment): any => {
@@ -322,6 +323,8 @@ const evalIdentifier = (node: any, env: Environment): any => {
 const evalIndexExpression = (left: any, index: any): any => {
   if (left.type() == ARRAY_OBJ && index.type() == INTEGER_OBJ) {
     return evalArrayIndexExpression(left, index);
+  } else if (left.type() == HASH_OBJ) {
+    return evalHashIndexExpression(left, index);
   } else {
     return new Error(`index operator not supported: ${left.type()}`);
   }
@@ -357,6 +360,15 @@ const evalHashLiteral = (node: any, env: Environment): any => {
   }
 
   return new Hash(pairs);
+};
+
+const evalHashIndexExpression = (hash: any, index: any): any => {
+  const pair = hash.paris.get(index.hashKey());
+  if (!pair) {
+    return null;
+  }
+
+  return pair.value;
 };
 
 const isTruthy = (obj: any): any => {

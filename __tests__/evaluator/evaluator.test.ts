@@ -2,7 +2,7 @@ import { Lexer } from '../../src/lexer/lexer';
 import { Eval } from '../../src/evaluator/evaluator';
 import { Parser } from '../../src/parser/parser';
 import { Environment } from '../../src/object/environment';
-import { Integer } from '../../src/object/object';
+// import { Integer } from '../../src/object/object';
 
 const testEval = (input: string) => {
   const l = new Lexer(input);
@@ -282,6 +282,10 @@ return 1;
       input: '"Hello" - "World"',
       expectedMessage: 'unknown operator: STRING - STRING',
     },
+    // {
+    //   input: `{"name": "Monkey"}[fn(x) { x }];`,
+    //   expectedMessage: 'unusable as hash key: FUNCTION',
+    // },
   ];
 
   for (const test of tests) {
@@ -565,5 +569,19 @@ describe('testArrayIndexExpressions', () => {
 //     it('testEval', () => {
 //       expect(pair.value).toBe(expected[exp]);
 //     });
+//   }
+// });
+
+// describe('testHashIndexExpressions', () => {
+//   const tests = [
+//     {
+//       input: `{5: 5}[5]`,
+//       expected: 5,
+//     },
+//   ];
+
+//   for (const test of tests) {
+//     const evaluated = testEval(test.input);
+//     console.log(evaluated); // TODO: TypeError: obj.type is not a function
 //   }
 // });
