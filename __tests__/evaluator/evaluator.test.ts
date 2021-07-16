@@ -2,6 +2,7 @@ import { Lexer } from '../../src/lexer/lexer';
 import { Eval } from '../../src/evaluator/evaluator';
 import { Parser } from '../../src/parser/parser';
 import { Environment } from '../../src/object/environment';
+import { Integer } from '../../src/object/object';
 
 const testEval = (input: string) => {
   const l = new Lexer(input);
@@ -550,3 +551,19 @@ describe('testArrayIndexExpressions', () => {
   //     });
   //   }
 });
+
+// describe('testHashLiterals', () => {
+//   const input = `{4: 4}`;
+//   const evaluated = testEval(input);
+
+//   const expected: any = {
+//     [new Integer(4).hashKey() as any]: 4,
+//   };
+
+//   for (const exp in expected) {
+//     const pair = evaluated.pairs.get(exp); // TODO: undefined
+//     it('testEval', () => {
+//       expect(pair.value).toBe(expected[exp]);
+//     });
+//   }
+// });

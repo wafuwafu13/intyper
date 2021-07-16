@@ -11,7 +11,13 @@ export const RETURN_VALUE_OBJ = 'RETURN_VALUE';
 export const FUNCTION_OBJ = 'FUNCTION';
 export const BUILTIN_OBJ = 'BUILTIN';
 export const ARRAY_OBJ = 'ARRAY';
+export const HASH_OBJ = 'HASH';
 export const ERROR_OBJ = 'ERROR';
+
+interface HashKey {
+  type: ObjectType;
+  value: number;
+}
 
 interface StringProps {
   value: string;
@@ -50,6 +56,10 @@ export class Integer<T extends IntegerProps> {
 
   type(): ObjectType {
     return INTEGER_OBJ;
+  }
+
+  hashKey(): HashKey {
+    return { type: this.type(), value: this.value };
   }
 }
 
@@ -177,6 +187,29 @@ export class Array {
 
   type(): ObjectType {
     return ARRAY_OBJ;
+  }
+}
+
+export class Hash {
+  pairs: Map<any, any>;
+
+  constructor(pairs: Map<any, any>) {
+    this.pairs = pairs;
+  }
+
+  inspect(): string {
+    let out: string[] = [];
+    let pairs: string[] = [];
+
+    for (const [key, value] of this.pairs) {
+      pairs.push(key.inspect() + ':' + value.inspect());
+    }
+
+    out.push('{');
+    out.push(pairs.join(''));
+    out.push('}');
+
+    return out.join('');
   }
 }
 

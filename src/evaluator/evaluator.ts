@@ -14,6 +14,7 @@ import {
   STRING_OBJ,
   Array,
   ARRAY_OBJ,
+  Hash,
 } from '../object/object';
 
 export const Eval = (node: any, env: Environment): any => {
@@ -101,6 +102,9 @@ export const Eval = (node: any, env: Environment): any => {
       }
 
       return evalIndexExpression(left, index);
+    }
+    case 'HashLiteral': {
+      return evalHashLiteral(node, env);
     }
   }
 
@@ -332,6 +336,27 @@ const evalArrayIndexExpression = (array: any, index: any): any => {
   }
 
   return array.elements[idx];
+};
+
+const evalHashLiteral = (node: any, env: Environment): any => {
+  const pairs = new Map<any, any>();
+
+  for (const [keyNode, valueNode] of node.pairs) {
+    const key = Eval(keyNode, env);
+    if (isError(key)) {
+      return key;
+    }
+
+    const value = Eval(valueNode, env);
+    if (isError(value)) {
+      return value;
+    }
+
+    const hashed = key.hashKey();
+    pairs.set(hashed, { key: key, value: value });
+  }
+
+  return new Hash(pairs);
 };
 
 const isTruthy = (obj: any): any => {
