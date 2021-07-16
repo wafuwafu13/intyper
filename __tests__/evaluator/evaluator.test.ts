@@ -399,6 +399,9 @@ describe('testBuiltinFunctions', () => {
     { input: `len("")`, expected: 0 },
     { input: `len("four")`, expected: 4 },
     { input: `len("hello world")`, expected: 11 },
+    { input: `len([1, 2, 3, 4])`, expected: 4 },
+    { input: `first([1, 2, 3, 4])`, expected: 1 },
+    { input: `last([1, 2, 3, 4])`, expected: 4 },
   ];
 
   for (const test of test_1) {
@@ -418,6 +421,14 @@ describe('testBuiltinFunctions', () => {
       input: `len("one", "two")`,
       expected: 'wrong number of arguments. got=2, want=1',
     },
+    {
+      input: `first("one")`,
+      expected: 'argument to `first` must be ARRAY, got STRING',
+    },
+    {
+      input: `last(1)`,
+      expected: 'argument to `last` must be ARRAY, got INTEGER',
+    },
   ];
 
   for (const test of test_2) {
@@ -428,6 +439,36 @@ describe('testBuiltinFunctions', () => {
       expect(evaluated.message).toBe(test.expected);
     });
   }
+
+  it('testRest1', () => {
+    const input = `let a = [1, 2, 3, 4]; rest(a);`;
+    const evaluated = testEval(input);
+
+    expect(evaluated.elements.length).toBe(3);
+    expect(evaluated.elements[0].value).toBe(2);
+    expect(evaluated.elements[1].value).toBe(3);
+    expect(evaluated.elements[2].value).toBe(4);
+  });
+
+  it('testRest2', () => {
+    const input = `let a = [1, 2, 3, 4]; rest(rest(rest(a)));`;
+    const evaluated = testEval(input);
+
+    expect(evaluated.elements.length).toBe(1);
+    expect(evaluated.elements[0].value).toBe(4);
+  });
+
+  it('testPush', () => {
+    const input = `let a = [1, 2, 3, 4]; let b = push(a, 5); b;`;
+    const evaluated = testEval(input);
+
+    expect(evaluated.elements.length).toBe(5);
+    expect(evaluated.elements[0].value).toBe(1);
+    expect(evaluated.elements[1].value).toBe(2);
+    expect(evaluated.elements[2].value).toBe(3);
+    expect(evaluated.elements[3].value).toBe(4);
+    expect(evaluated.elements[4].value).toBe(5);
+  });
 });
 
 describe('testArrayLiterals', () => {
