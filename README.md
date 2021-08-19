@@ -2,6 +2,10 @@
 
 [Go言語でつくるインタプリタ](https://www.oreilly.co.jp/books/9784873118222/)
 
+## Blog
+
+[『Go言語で作るインタプリタ』をTypeScriptで実装する](https://wafuwafu13.hatenadiary.com/entry/2020/08/18/115126)
+
 ## How to try
 
 ### Run tests
