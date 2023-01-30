@@ -18,7 +18,7 @@ const StartLexer = (input: string) => {
 export const Start = (input: string, debug: boolean) => {
   if (debug) {
     console.log("### Lexer \n");
-    StartLexer(input)
+    StartLexer(input);
     console.log("");
   }
 
