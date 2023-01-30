@@ -1,58 +1,115 @@
-## Reference
+# intyper
 
-[Go言語でつくるインタプリタ](https://www.oreilly.co.jp/books/9784873118222/)
+This is TypeScript Implemention of
+[Writing An Interpreter In Go](https://interpreterbook.com/)\
+Copyright (c) 2016-2017 Thorsten Ball
 
-## Blog
+### Usage
 
-[『Go言語で作るインタプリタ』をTypeScriptで実装する](https://wafuwafu13.hatenadiary.com/entry/2020/08/18/115126)
+```
+~/path/to/intyper 
+$ deno run ./src/main.ts "<INPUT>" [option]
+```
 
-## How to try
+### Example
 
-### Run tests
 ```zsh
-$ git clone https://github.com/wafuwafu13/Interpreter-made-in-TypeScript.git
-$ cd Interpreter-made-in-TypeScript
-$ npm i
-$ npm run test
+~/path/to/intyper 
+$ deno run ./src/main.ts \
+> "if (len([1, 2, 3, 4]) > 3) {
+        let add = fn(x, y) { x + y; };
+        add(5 + 5, add(5, 5));
+}"
+
+ Hello! This is the Monkey programming language! 
+
+### Eval 
+
+20
 ```
 
-### Input and Build
+### Debug mode
 
-Change here
-
-```ts
-const input = '(5 + 10 * 2 + 15 / 3) * 2 + -10';
-```
-https://github.com/wafuwafu13/Interpreter-made-in-TypeScript/blob/bbdce3acd38986e1474565b5e960c1bc95369bc0/src/repl/repl.ts#L7
-
-and build
 ```zsh
-$ npm run build
-$ cd dist
-$ node bundle.js
-```
+~/path/to/intyper 
+$ deno run ./src/main.ts \        
+"if (len([1, 2, 3, 4]) > 3) {
+    let add = fn(x, y) { x + y; };
+    add(5 + 5, add(5, 5));
+}" --debug
 
-## Example
+ Hello! This is the Monkey programming language! 
 
-### Input
+### Lexer 
 
-```ts
-const input = `
-if (len([1, 2, 3, 4]) > 3) {
-	let add = fn(x, y) { x + y; };
-	add(5 + 5, add(5, 5));
+Token { type: "IF", literal: "if" }
+Token { type: "(", literal: "(" }
+Token { type: "IDENT", literal: "len" }
+Token { type: "(", literal: "(" }
+Token { type: "[", literal: "[" }
+Token { type: "INT", literal: "1" }
+Token { type: ",", literal: "," }
+Token { type: "INT", literal: "2" }
+Token { type: ",", literal: "," }
+Token { type: "INT", literal: "3" }
+Token { type: ",", literal: "," }
+Token { type: "INT", literal: "4" }
+Token { type: "]", literal: "]" }
+Token { type: ")", literal: ")" }
+Token { type: ">", literal: ">" }
+Token { type: "INT", literal: "3" }
+Token { type: ")", literal: ")" }
+Token { type: "{", literal: "{" }
+Token { type: "LET", literal: "let" }
+Token { type: "IDENT", literal: "add" }
+Token { type: "=", literal: "=" }
+Token { type: "FUNCTION", literal: "fn" }
+Token { type: "(", literal: "(" }
+Token { type: "IDENT", literal: "x" }
+Token { type: ",", literal: "," }
+Token { type: "IDENT", literal: "y" }
+Token { type: ")", literal: ")" }
+Token { type: "{", literal: "{" }
+Token { type: "IDENT", literal: "x" }
+Token { type: "+", literal: "+" }
+Token { type: "IDENT", literal: "y" }
+Token { type: ";", literal: ";" }
+Token { type: "}", literal: "}" }
+Token { type: ";", literal: ";" }
+Token { type: "IDENT", literal: "add" }
+Token { type: "(", literal: "(" }
+Token { type: "INT", literal: "5" }
+Token { type: "+", literal: "+" }
+Token { type: "INT", literal: "5" }
+Token { type: ",", literal: "," }
+Token { type: "IDENT", literal: "add" }
+Token { type: "(", literal: "(" }
+Token { type: "INT", literal: "5" }
+Token { type: ",", literal: "," }
+Token { type: "INT", literal: "5" }
+Token { type: ")", literal: ")" }
+Token { type: ")", literal: ")" }
+Token { type: ";", literal: ";" }
+Token { type: "}", literal: "}" }
+
+### Parser 
+
+Program {
+  statements: [
+    ExpressionStatement {
+      token: Token { type: "IF", literal: "if" },
+      expression: IfExpression {
+        token: [Object],
+        condition: [Object],
+        consequence: [Object],
+        alternative: undefined
+      },
+      value: undefined
+    }
+  ]
 }
-`;
+
+### Eval 
+
+20
 ```
-
-### Lexer
-
-![スクリーンショット 2021-07-17 11 33 14](https://user-images.githubusercontent.com/50798936/126022680-1fc710ac-4d93-4bcb-8320-21793f690286.png)
-
-### Parser
-
-![スクリーンショット 2021-07-17 11 34 25](https://user-images.githubusercontent.com/50798936/126022699-b94e66c9-2bbe-4766-897e-6cf90240b06e.png)
-
-### Evaluator
-
-![スクリーンショット 2021-07-17 11 35 23](https://user-images.githubusercontent.com/50798936/126022719-d22d9c51-01c0-4792-8b43-11ea5196a253.png)

@@ -1,4 +1,4 @@
-import { Array, Builtin, Error, Integer } from '../object/object';
+import { Array, Builtin, Error, Integer } from "../object/object.ts";
 
 export const builtins = {
   len: new Builtin((...args: any): any => {
@@ -7,9 +7,9 @@ export const builtins = {
     }
 
     switch (args[0].constructor.name) {
-      case 'String':
+      case "String":
         return new Integer(args[0].value.length);
-      case 'Array':
+      case "Array":
         return new Integer(args[0].elements.length);
       default:
         return new Error(
@@ -23,7 +23,7 @@ export const builtins = {
       return new Error(`wrong number of arguments. got=${args.length}, want=1`);
     }
 
-    if (args[0].constructor.name != 'Array') {
+    if (args[0].constructor.name != "Array") {
       return new Error(
         `argument to \`first\` must be ARRAY, got ${args[0].type()}`,
       );
@@ -41,7 +41,7 @@ export const builtins = {
       return new Error(`wrong number of arguments. got=${args.length}, want=1`);
     }
 
-    if (args[0].constructor.name != 'Array') {
+    if (args[0].constructor.name != "Array") {
       return new Error(
         `argument to \`last\` must be ARRAY, got ${args[0].type()}`,
       );
@@ -61,7 +61,7 @@ export const builtins = {
       return new Error(`wrong number of arguments. got=${args.length}, want=1`);
     }
 
-    if (args[0].constructor.name != 'Array') {
+    if (args[0].constructor.name != "Array") {
       return new Error(
         `argument to \`rest\` must be ARRAY, got ${args[0].type()}`,
       );
@@ -86,7 +86,7 @@ export const builtins = {
       return new Error(`wrong number of arguments. got=${args.length}, want=2`);
     }
 
-    if (args[0].constructor.name != 'Array') {
+    if (args[0].constructor.name != "Array") {
       return new Error(
         `argument to \`rest\` must be ARRAY, got ${args[0].type()}`,
       );

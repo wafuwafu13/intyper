@@ -1,43 +1,43 @@
-import { Environment } from '../object/environment';
-import { builtins } from './builtins';
+import { Environment } from "../object/environment.ts";
+import { builtins } from "./builtins.ts";
 import {
-  Integer,
-  Boolean,
-  Null,
-  ReturnValue,
-  Error,
-  INTEGER_OBJ,
-  RETURN_VALUE_OBJ,
-  ERROR_OBJ,
-  Function,
-  String,
-  STRING_OBJ,
   Array,
   ARRAY_OBJ,
+  Boolean,
+  Error,
+  ERROR_OBJ,
+  Function,
   Hash,
   HASH_OBJ,
-} from '../object/object';
+  Integer,
+  INTEGER_OBJ,
+  Null,
+  RETURN_VALUE_OBJ,
+  ReturnValue,
+  String,
+  STRING_OBJ,
+} from "../object/object.ts";
 
 export const Eval = (node: any, env: Environment): any => {
   switch (node.constructor.name) {
-    case 'Program':
+    case "Program":
       return evalProgram(node, env);
-    case 'ExpressionStatement':
+    case "ExpressionStatement":
       return Eval(node.expression, env);
-    case 'StringLiteral':
+    case "StringLiteral":
       return new String(node.value);
-    case 'IntegerLiteral':
+    case "IntegerLiteral":
       return new Integer(node.value);
-    case 'Boolean':
+    case "Boolean":
       return new Boolean(node.value);
-    case 'PrefixExpression': {
+    case "PrefixExpression": {
       const right = Eval(node.right, env);
       if (isError(right)) {
         return right;
       }
       return evalPrefixExpression(node.operator, right);
     }
-    case 'InfixExpression': {
+    case "InfixExpression": {
       const left = Eval(node.left, env);
       if (isError(left)) {
         return left;
@@ -48,32 +48,32 @@ export const Eval = (node: any, env: Environment): any => {
       }
       return evalInfixExpression(node.operator, left, right);
     }
-    case 'BlockStatement':
+    case "BlockStatement":
       return evalBlockStatement(node, env);
-    case 'IfExpression':
+    case "IfExpression":
       return evalIfExpression(node, env);
-    case 'ReturnStatement': {
+    case "ReturnStatement": {
       const val = Eval(node.returnValue, env);
       if (isError(val)) {
         return val;
       }
       return new ReturnValue(val);
     }
-    case 'Identifier':
+    case "Identifier":
       return evalIdentifier(node, env);
-    case 'LetStatement': {
+    case "LetStatement": {
       const val = Eval(node.value, env);
       if (isError(val)) {
         return val;
       }
       return env.set(node.name.value, val);
     }
-    case 'FunctionLiteral': {
+    case "FunctionLiteral": {
       const params = node.parameters;
       const body = node.body;
       return new Function(params, body, env);
     }
-    case 'CallExpression': {
+    case "CallExpression": {
       const objectFunction = Eval(node.fc, env);
       if (isError(objectFunction)) {
         return objectFunction;
@@ -85,14 +85,14 @@ export const Eval = (node: any, env: Environment): any => {
 
       return applyFunction(objectFunction, args);
     }
-    case 'ArrayLiteral': {
+    case "ArrayLiteral": {
       const elements = evalExpressions(node.elements, env);
       if (elements.length == 1 && isError(elements[0])) {
         return elements[0];
       }
       return new Array(elements);
     }
-    case 'IndexExpression': {
+    case "IndexExpression": {
       const left = Eval(node.left, env);
       if (isError(left)) {
         return left;
@@ -104,7 +104,7 @@ export const Eval = (node: any, env: Environment): any => {
 
       return evalIndexExpression(left, index);
     }
-    case 'HashLiteral': {
+    case "HashLiteral": {
       return evalHashLiteral(node, env);
     }
   }
@@ -118,9 +118,9 @@ const evalProgram = (program: any, env: Environment): any => {
     result = Eval(statement, env);
 
     switch (result.constructor.name) {
-      case 'ReturnValue':
+      case "ReturnValue":
         return result.value;
-      case 'Error':
+      case "Error":
         return result;
     }
   }
@@ -160,12 +160,12 @@ const evalExpressions = (exps: any, env: Environment): any => {
 
 const applyFunction = (fn: any, args: any): any => {
   switch (fn.constructor.name) {
-    case 'Function': {
+    case "Function": {
       const extendedEnv = extendFunctionEnv(fn, args);
       const evaluated = Eval(fn.body, extendedEnv);
       return unwrapReturnValue(evaluated);
     }
-    case 'Builtin': {
+    case "Builtin": {
       return fn.fn(...args);
     }
     default:
@@ -184,7 +184,7 @@ const extendFunctionEnv = (fn: any, args: any): Environment => {
 };
 
 const unwrapReturnValue = (obj: any): any => {
-  if (obj.constructor.name == 'ReturnValue') {
+  if (obj.constructor.name == "ReturnValue") {
     return obj.value;
   }
 
@@ -193,9 +193,9 @@ const unwrapReturnValue = (obj: any): any => {
 
 const evalPrefixExpression = (operator: string, right: any): any => {
   switch (operator) {
-    case '!':
+    case "!":
       return evalBangOperatorExpression(right);
-    case '-':
+    case "-":
       return evalMinusPrefixOperatorExpression(right);
     default:
       return new Error(`unknown operator: ${operator}${right.type}`);
@@ -228,10 +228,10 @@ const evalInfixExpression = (operator: string, left: any, right: any): any => {
   if (left.type() == INTEGER_OBJ && right.type() == INTEGER_OBJ) {
     return evalIntegerInfixExpression(operator, left, right);
   }
-  if (operator == '==') {
+  if (operator == "==") {
     return new Boolean(left.value == right.value);
   }
-  if (operator == '!=') {
+  if (operator == "!=") {
     return new Boolean(left.value != right.value);
   }
   if (left.type() != right.type()) {
@@ -252,7 +252,7 @@ const evalStringInfixExpression = (
   left: any,
   right: any,
 ): any => {
-  if (operator != '+') {
+  if (operator != "+") {
     return new Error(
       `unknown operator: ${left.type()} ${operator} ${right.type()}`,
     );
@@ -272,21 +272,21 @@ const evalIntegerInfixExpression = (
   const rightVal = right.value;
 
   switch (operator) {
-    case '+':
+    case "+":
       return new Integer(leftVal + rightVal);
-    case '-':
+    case "-":
       return new Integer(leftVal - rightVal);
-    case '*':
+    case "*":
       return new Integer(leftVal * rightVal);
-    case '/':
+    case "/":
       return new Integer(leftVal / rightVal);
-    case '<':
+    case "<":
       return new Boolean(leftVal < rightVal);
-    case '>':
+    case ">":
       return new Boolean(leftVal > rightVal);
-    case '==':
+    case "==":
       return new Boolean(leftVal == rightVal);
-    case '!=':
+    case "!=":
       return new Boolean(leftVal != rightVal);
     default:
       return new Error(

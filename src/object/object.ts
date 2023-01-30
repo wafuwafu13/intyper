@@ -1,18 +1,18 @@
-import type { BlockStatement, Identifier } from '../ast/ast';
-import type { Environment } from './environment';
+import type { BlockStatement, Identifier } from "../ast/ast.ts";
+import type { Environment } from "./environment.ts";
 
 type ObjectType = string;
 
-export const STRING_OBJ = 'STRING';
-export const INTEGER_OBJ = 'INTEGER';
-export const BOOLEAN_OBJ = 'BOOLEAN';
-export const NULL_OBJ = 'NULL';
-export const RETURN_VALUE_OBJ = 'RETURN_VALUE';
-export const FUNCTION_OBJ = 'FUNCTION';
-export const BUILTIN_OBJ = 'BUILTIN';
-export const ARRAY_OBJ = 'ARRAY';
-export const HASH_OBJ = 'HASH';
-export const ERROR_OBJ = 'ERROR';
+export const STRING_OBJ = "STRING";
+export const INTEGER_OBJ = "INTEGER";
+export const BOOLEAN_OBJ = "BOOLEAN";
+export const NULL_OBJ = "NULL";
+export const RETURN_VALUE_OBJ = "RETURN_VALUE";
+export const FUNCTION_OBJ = "FUNCTION";
+export const BUILTIN_OBJ = "BUILTIN";
+export const ARRAY_OBJ = "ARRAY";
+export const HASH_OBJ = "HASH";
+export const ERROR_OBJ = "ERROR";
 
 interface HashKey {
   type: ObjectType;
@@ -24,9 +24,9 @@ interface StringProps {
 }
 
 export class String<T extends StringProps> {
-  value: T['value'];
+  value: T["value"];
 
-  constructor(value: T['value']) {
+  constructor(value: T["value"]) {
     this.value = value;
   }
 
@@ -44,9 +44,9 @@ interface IntegerProps {
 }
 
 export class Integer<T extends IntegerProps> {
-  value: T['value'];
+  value: T["value"];
 
-  constructor(value: T['value']) {
+  constructor(value: T["value"]) {
     this.value = value;
   }
 
@@ -68,9 +68,9 @@ interface BooleanProps {
 }
 
 export class Boolean<T extends BooleanProps> {
-  value: T['value'];
+  value: T["value"];
 
-  constructor(value: T['value']) {
+  constructor(value: T["value"]) {
     this.value = value;
   }
 
@@ -85,7 +85,7 @@ export class Boolean<T extends BooleanProps> {
 
 export class Null {
   inspect(): void {
-    console.log('null');
+    console.log("null");
   }
 
   type(): ObjectType {
@@ -132,14 +132,14 @@ export class Function {
       params.push(p.string() as any);
     }
 
-    out.push('fn');
-    out.push('(');
-    out.push(params.join(', '));
-    out.push(') {\n');
+    out.push("fn");
+    out.push("(");
+    out.push(params.join(", "));
+    out.push(") {\n");
     out.push(this.body.string());
-    out.push('\n}');
+    out.push("\n}");
 
-    return out.join('');
+    return out.join("");
   }
 
   type(): ObjectType {
@@ -155,7 +155,7 @@ export class Builtin {
   }
 
   inspect(): string {
-    return 'builtin function';
+    return "builtin function";
   }
 
   type(): ObjectType {
@@ -178,11 +178,11 @@ export class Array {
       elements.push(e.inspect());
     }
 
-    out.push('[');
-    out.push(elements.join(''));
-    out.push(']');
+    out.push("[");
+    out.push(elements.join(""));
+    out.push("]");
 
-    return out.join('');
+    return out.join("");
   }
 
   type(): ObjectType {
@@ -202,14 +202,14 @@ export class Hash {
     let pairs: string[] = [];
 
     for (const [key, value] of this.pairs) {
-      pairs.push(key.inspect() + ':' + value.inspect());
+      pairs.push(key.inspect() + ":" + value.inspect());
     }
 
-    out.push('{');
-    out.push(pairs.join(''));
-    out.push('}');
+    out.push("{");
+    out.push(pairs.join(""));
+    out.push("}");
 
-    return out.join('');
+    return out.join("");
   }
 }
 
@@ -221,7 +221,7 @@ export class Error {
   }
 
   inspect(): string {
-    return 'ERROR: ' + this.message;
+    return "ERROR: " + this.message;
   }
 
   type(): ObjectType {

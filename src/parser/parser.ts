@@ -1,37 +1,37 @@
-import { Lexer, LexerProps } from '../lexer/lexer';
-import { Token, TokenDef, TokenType, TokenProps } from '../token/token';
+import { Lexer, LexerProps } from "../lexer/lexer.ts";
+import { Token, TokenDef, TokenProps, TokenType } from "../token/token.ts";
 import {
-  Program,
-  LetStatement,
-  Identifier,
-  ReturnStatement,
-  ExpressionStatement,
-  IntegerLiteral,
-  PrefixExpression,
-  InfixExpression,
-  Boolean,
-  ProgramProps,
-  LetStatementProps,
-  ReturnStatementProps,
-  ExpressionStatementProps,
-  PrefixExpressionProps,
-  InfixExpressionProps,
-  IdentifierProps,
-  IntegerLiteralProps,
-  BooleanProps,
-  IfExpression,
-  IfExpressionProps,
+  ArrayLiteral,
   BlockStatement,
   BlockStatementProps,
-  FunctionLiteral,
-  FunctionLiteralProps,
+  Boolean,
+  BooleanProps,
   CallExpression,
   CallExpressionProps,
-  StringLiteral,
-  ArrayLiteral,
-  IndexExpression,
+  ExpressionStatement,
+  ExpressionStatementProps,
+  FunctionLiteral,
+  FunctionLiteralProps,
   HashLiteral,
-} from '../ast/ast';
+  Identifier,
+  IdentifierProps,
+  IfExpression,
+  IfExpressionProps,
+  IndexExpression,
+  InfixExpression,
+  InfixExpressionProps,
+  IntegerLiteral,
+  IntegerLiteralProps,
+  LetStatement,
+  LetStatementProps,
+  PrefixExpression,
+  PrefixExpressionProps,
+  Program,
+  ProgramProps,
+  ReturnStatement,
+  ReturnStatementProps,
+  StringLiteral,
+} from "../ast/ast.ts";
 
 const LOWEST = 1;
 const EQUALS = 2;
@@ -77,20 +77,20 @@ interface ParserProps {
 }
 
 export class Parser<T extends ParserProps> {
-  l: T['l'];
-  curToken: T['curToken'];
-  peekToken: T['peekToken'];
-  errors: T['errors'] = [];
+  l: T["l"];
+  curToken: T["curToken"];
+  peekToken: T["peekToken"];
+  errors: T["errors"] = [];
 
-  prefixParseFns: T['prefixParseFns'];
-  infixParseFns: T['infixParseFns'];
+  prefixParseFns: T["prefixParseFns"];
+  infixParseFns: T["infixParseFns"];
 
   constructor(
-    l: T['l'],
-    curToken: T['curToken'] = new Token(TokenDef.DEFAULT, 'DEFAULT'),
-    peekToken: T['peekToken'] = new Token(TokenDef.DEFAULT, 'DEFAULT'),
-    errors: T['errors'] = [],
-    prefixParseFns: T['prefixParseFns'] = new Map<
+    l: T["l"],
+    curToken: T["curToken"] = new Token(TokenDef.DEFAULT, "DEFAULT"),
+    peekToken: T["peekToken"] = new Token(TokenDef.DEFAULT, "DEFAULT"),
+    errors: T["errors"] = [],
+    prefixParseFns: T["prefixParseFns"] = new Map<
       string,
       (
         t: Token<TokenProps>,
@@ -99,7 +99,7 @@ export class Parser<T extends ParserProps> {
         | IntegerLiteral<IntegerLiteralProps>
         | Boolean<BooleanProps>
     >(),
-    infixParseFns: T['infixParseFns'] = new Map<
+    infixParseFns: T["infixParseFns"] = new Map<
       string,
       (t: Token<TokenProps>, left: Identifier<IdentifierProps>) => any
     >(),
@@ -234,9 +234,10 @@ export class Parser<T extends ParserProps> {
   }
 
   parseExpressionStatement(): ExpressionStatement<ExpressionStatementProps> {
-    const stmt: ExpressionStatement<ExpressionStatementProps> = new ExpressionStatement(
-      this.curToken,
-    );
+    const stmt: ExpressionStatement<ExpressionStatementProps> =
+      new ExpressionStatement(
+        this.curToken,
+      );
 
     stmt.expression = this.parseExpression(LOWEST);
 
@@ -248,7 +249,7 @@ export class Parser<T extends ParserProps> {
   }
 
   noPrefixParseFnError(t: TokenType): void {
-    const msg = 'no prefix parse function for ' + t + ' found';
+    const msg = "no prefix parse function for " + t + " found";
     this.errors.push(msg);
   }
 
@@ -598,12 +599,11 @@ export class Parser<T extends ParserProps> {
   }
 
   peekError(t: TokenType): void {
-    const msg: string =
-      'expected next token to be ' +
+    const msg: string = "expected next token to be " +
       t +
-      ' , got ' +
+      " , got " +
       this.peekToken.type +
-      ' instead';
+      " instead";
     this.errors.push(msg);
   }
 }

@@ -1,4 +1,4 @@
-import { Token, TokenProps } from '../token/token';
+import { Token, TokenProps } from "../token/token.ts";
 
 export interface ProgramProps {
   statements:
@@ -8,9 +8,9 @@ export interface ProgramProps {
 }
 
 export class Program<T extends ProgramProps> {
-  statements: T['statements'];
+  statements: T["statements"];
 
-  constructor(statements: T['statements'] = []) {
+  constructor(statements: T["statements"] = []) {
     this.statements = statements;
   }
 }
@@ -22,11 +22,11 @@ export interface LetStatementProps {
 }
 
 export class LetStatement<T extends LetStatementProps> {
-  token: T['token'];
-  name?: T['name'];
-  value?: T['value'];
+  token: T["token"];
+  name?: T["name"];
+  value?: T["value"];
 
-  constructor(token: T['token']) {
+  constructor(token: T["token"]) {
     this.token = token;
   }
 
@@ -36,17 +36,17 @@ export class LetStatement<T extends LetStatementProps> {
 
   string(): string {
     let statements = [];
-    statements.push(this.tokenLiteral() + ' ');
+    statements.push(this.tokenLiteral() + " ");
     statements.push(this.name!.string());
-    statements.push(' = ');
+    statements.push(" = ");
 
     if (this.value != null) {
       statements.push(this.value.string());
     }
 
-    statements.push(';');
+    statements.push(";");
 
-    return statements.join('');
+    return statements.join("");
   }
 }
 
@@ -56,10 +56,10 @@ export interface ReturnStatementProps {
 }
 
 export class ReturnStatement<T extends ReturnStatementProps> {
-  token: T['token'];
-  returnValue?: T['value'];
+  token: T["token"];
+  returnValue?: T["value"];
 
-  constructor(token: T['token']) {
+  constructor(token: T["token"]) {
     this.token = token;
   }
 
@@ -69,15 +69,15 @@ export class ReturnStatement<T extends ReturnStatementProps> {
 
   string(): string {
     let statements = [];
-    statements.push(this.tokenLiteral() + ' ');
+    statements.push(this.tokenLiteral() + " ");
 
     if (this.returnValue != null) {
       statements.push(this.returnValue);
     }
 
-    statements.push(';');
+    statements.push(";");
 
-    return statements.join('');
+    return statements.join("");
   }
 }
 
@@ -88,11 +88,11 @@ export interface ExpressionStatementProps {
 }
 
 export class ExpressionStatement<T extends ExpressionStatementProps> {
-  token: T['token'];
-  expression?: T['expression'];
-  value?: T['value'];
+  token: T["token"];
+  expression?: T["expression"];
+  value?: T["value"];
 
-  constructor(token: T['token']) {
+  constructor(token: T["token"]) {
     this.token = token;
   }
 
@@ -104,7 +104,7 @@ export class ExpressionStatement<T extends ExpressionStatementProps> {
     if (this.expression != null) {
       return this.expression.string();
     }
-    return '';
+    return "";
   }
 }
 
@@ -115,11 +115,11 @@ export interface PrefixExpressionProps {
 }
 
 export class PrefixExpression<T extends PrefixExpressionProps> {
-  token: T['token'];
-  operator: T['operator'];
-  right?: T['right'];
+  token: T["token"];
+  operator: T["operator"];
+  right?: T["right"];
 
-  constructor(token: T['token'], operator: T['operator']) {
+  constructor(token: T["token"], operator: T["operator"]) {
     this.token = token;
     this.operator = operator;
   }
@@ -130,12 +130,12 @@ export class PrefixExpression<T extends PrefixExpressionProps> {
 
   string(): string {
     let statements = [];
-    statements.push('(');
+    statements.push("(");
     statements.push(this.operator);
     statements.push(this.right!.string());
-    statements.push(')');
+    statements.push(")");
 
-    return statements.join('');
+    return statements.join("");
   }
 }
 
@@ -148,12 +148,12 @@ export interface InfixExpressionProps {
 }
 
 export class InfixExpression<T extends InfixExpressionProps> {
-  token: T['token'];
-  operator: T['operator'];
-  left: T['left'];
+  token: T["token"];
+  operator: T["operator"];
+  left: T["left"];
   right?: Identifier<IdentifierProps>;
 
-  constructor(token: T['token'], operator: T['operator'], left: T['left']) {
+  constructor(token: T["token"], operator: T["operator"], left: T["left"]) {
     this.token = token;
     this.operator = operator;
     this.left = left;
@@ -165,21 +165,21 @@ export class InfixExpression<T extends InfixExpressionProps> {
 
   string(): string {
     let statements = [];
-    statements.push('(');
+    statements.push("(");
     try {
       statements.push(this.left.string());
     } catch {
       statements.push(this.left.value);
     }
-    statements.push(' ' + this.operator + ' ');
+    statements.push(" " + this.operator + " ");
     try {
       statements.push(this.right!.string());
     } catch {
       statements.push(this.right!.value);
     }
-    statements.push(')');
+    statements.push(")");
 
-    return statements.join('');
+    return statements.join("");
   }
 }
 
@@ -189,10 +189,10 @@ export interface IdentifierProps {
 }
 
 export class Identifier<T extends IdentifierProps> {
-  token: T['token'];
-  value: T['value'];
+  token: T["token"];
+  value: T["value"];
 
-  constructor(token: T['token'], value: T['value']) {
+  constructor(token: T["token"], value: T["value"]) {
     this.token = token;
     this.value = value;
   }
@@ -212,10 +212,10 @@ export interface StringLiteralProps {
 }
 
 export class StringLiteral<T extends StringLiteralProps> {
-  token: T['token'];
-  value?: T['value'];
+  token: T["token"];
+  value?: T["value"];
 
-  constructor(token: T['token'], value: T['value']) {
+  constructor(token: T["token"], value: T["value"]) {
     this.token = token;
     this.value = value;
   }
@@ -235,10 +235,10 @@ export interface IntegerLiteralProps {
 }
 
 export class IntegerLiteral<T extends IntegerLiteralProps> {
-  token: T['token'];
-  value?: T['value'];
+  token: T["token"];
+  value?: T["value"];
 
-  constructor(token: T['token']) {
+  constructor(token: T["token"]) {
     this.token = token;
   }
 
@@ -257,10 +257,10 @@ export interface BooleanProps {
 }
 
 export class Boolean<T extends BooleanProps> {
-  token: T['token'];
-  value: T['value'];
+  token: T["token"];
+  value: T["value"];
 
-  constructor(token: T['token'], value: T['value']) {
+  constructor(token: T["token"], value: T["value"]) {
     this.token = token;
     this.value = value;
   }
@@ -282,12 +282,12 @@ export interface IfExpressionProps {
 }
 
 export class IfExpression<T extends IfExpressionProps> {
-  token: T['token'];
-  condition?: T['condition'];
-  consequence?: T['consequence'];
-  alternative?: T['alternative'];
+  token: T["token"];
+  condition?: T["condition"];
+  consequence?: T["consequence"];
+  alternative?: T["alternative"];
 
-  constructor(token: T['token']) {
+  constructor(token: T["token"]) {
     this.token = token;
   }
 
@@ -297,17 +297,17 @@ export class IfExpression<T extends IfExpressionProps> {
 
   string(): string | number {
     let statements = [];
-    statements.push('if');
+    statements.push("if");
     statements.push(this.condition!.string());
-    statements.push(' ');
+    statements.push(" ");
     statements.push(this.consequence!.string());
 
     if (this.alternative != null) {
-      statements.push('else');
+      statements.push("else");
       statements.push(this.alternative.string());
     }
 
-    return statements.join('');
+    return statements.join("");
   }
 }
 
@@ -320,10 +320,10 @@ export interface BlockStatementProps {
 }
 
 export class BlockStatement<T extends BlockStatementProps> {
-  token: T['token'];
-  statements?: T['statements'];
+  token: T["token"];
+  statements?: T["statements"];
 
-  constructor(token: T['token']) {
+  constructor(token: T["token"]) {
     this.token = token;
   }
 
@@ -337,7 +337,7 @@ export class BlockStatement<T extends BlockStatementProps> {
       statements.push(statement.string());
     }
 
-    return statements.join('');
+    return statements.join("");
   }
 }
 
@@ -348,9 +348,9 @@ export interface FunctionLiteralProps {
 }
 
 export class FunctionLiteral<T extends FunctionLiteralProps> {
-  token: T['token'];
-  parameters?: T['parameters'];
-  body?: T['body'];
+  token: T["token"];
+  parameters?: T["parameters"];
+  body?: T["body"];
 
   constructor(token: Token<TokenProps>) {
     this.token = token;
@@ -369,12 +369,12 @@ export class FunctionLiteral<T extends FunctionLiteralProps> {
     }
 
     statements.push(this.tokenLiteral());
-    statements.push('(');
-    statements.push(params.join(', '));
-    statements.push(') ');
+    statements.push("(");
+    statements.push(params.join(", "));
+    statements.push(") ");
     statements.push(this.body!.string());
 
-    return statements.join('');
+    return statements.join("");
   }
 }
 
@@ -385,11 +385,11 @@ export interface CallExpressionProps {
 }
 
 export class CallExpression<T extends CallExpressionProps> {
-  token: T['token'];
-  fc: T['fc'];
-  arguments?: T['arguments'];
+  token: T["token"];
+  fc: T["fc"];
+  arguments?: T["arguments"];
 
-  constructor(token: T['token'], fc: T['fc']) {
+  constructor(token: T["token"], fc: T["fc"]) {
     this.token = token;
     this.fc = fc;
   }
@@ -407,11 +407,11 @@ export class CallExpression<T extends CallExpressionProps> {
     }
 
     statements.push(this.fc.string());
-    statements.push('(');
-    statements.push(args.join(', '));
-    statements.push(')');
+    statements.push("(");
+    statements.push(args.join(", "));
+    statements.push(")");
 
-    return statements.join('');
+    return statements.join("");
   }
 }
 
@@ -421,10 +421,10 @@ export interface ArrayLiteralProps {
 }
 
 export class ArrayLiteral<T extends ArrayLiteralProps> {
-  token: T['token'];
-  elements?: T['elements'];
+  token: T["token"];
+  elements?: T["elements"];
 
-  constructor(token: T['token']) {
+  constructor(token: T["token"]) {
     this.token = token;
   }
 
@@ -438,11 +438,11 @@ export class ArrayLiteral<T extends ArrayLiteralProps> {
     for (const el of this.elements!) {
       elements.push(el.string());
     }
-    statements.push('[');
-    statements.push(elements.join(', '));
-    statements.push(']');
+    statements.push("[");
+    statements.push(elements.join(", "));
+    statements.push("]");
 
-    return statements.join('');
+    return statements.join("");
   }
 }
 
@@ -453,11 +453,11 @@ export interface IndexExpressionProps {
 }
 
 export class IndexExpression<T extends IndexExpressionProps> {
-  token: T['token'];
-  left: T['left'];
-  index?: T['index'];
+  token: T["token"];
+  left: T["left"];
+  index?: T["index"];
 
-  constructor(token: T['token'], left: T['left']) {
+  constructor(token: T["token"], left: T["left"]) {
     this.token = token;
     this.left = left;
   }
@@ -469,13 +469,13 @@ export class IndexExpression<T extends IndexExpressionProps> {
   string(): string {
     let statements = [];
 
-    statements.push('(');
+    statements.push("(");
     statements.push(this.left.string());
-    statements.push('[');
+    statements.push("[");
     statements.push(this.index!.string());
-    statements.push('])');
+    statements.push("])");
 
-    return statements.join('');
+    return statements.join("");
   }
 }
 
@@ -485,10 +485,10 @@ export interface HashLiteralProps {
 }
 
 export class HashLiteral<T extends HashLiteralProps> {
-  token: T['token'];
-  pairs?: T['pairs'];
+  token: T["token"];
+  pairs?: T["pairs"];
 
-  constructor(token: T['token']) {
+  constructor(token: T["token"]) {
     this.token = token;
   }
 
@@ -501,13 +501,13 @@ export class HashLiteral<T extends HashLiteralProps> {
     let pairs = [];
 
     for (const [key, value] of this.pairs!) {
-      pairs.push(key.string() + ':' + value.string());
+      pairs.push(key.string() + ":" + value.string());
     }
 
-    statements.push('{');
-    statements.push(pairs.join(', '));
-    statements.push('}');
+    statements.push("{");
+    statements.push(pairs.join(", "));
+    statements.push("}");
 
-    return statements.join('');
+    return statements.join("");
   }
 }

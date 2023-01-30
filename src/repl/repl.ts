@@ -1,12 +1,10 @@
-import { Lexer } from '../lexer/lexer';
-import { TokenDef } from '../token/token';
-import { Parser } from '../parser/parser';
-import { Eval } from '../evaluator/evaluator';
-import { Environment } from '../object/environment';
+import { Lexer } from "../lexer/lexer.ts";
+import { TokenDef } from "../token/token.ts";
+import { Parser } from "../parser/parser.ts";
+import { Eval } from "../evaluator/evaluator.ts";
+import { Environment } from "../object/environment.ts";
 
-const input = '(5 + 10 * 2 + 15 / 3) * 2 + -10';
-
-export const StartLexer = () => {
+const StartLexer = (input: string) => {
   const l = new Lexer(input);
   while (true) {
     const tok = l.NextToken();
@@ -17,16 +15,26 @@ export const StartLexer = () => {
   }
 };
 
-export const StartParser = () => {
-  console.log(input);
+export const Start = (input: string, debug: boolean) => {
+  if (debug) {
+    console.log("### Lexer \n");
+    StartLexer(input);
+    console.log("");
+  }
+
   const l = new Lexer(input);
   const p = new Parser(l);
   const program: any = p.parseProgram();
-  console.log(program);
-  console.log(program.statements[0].expression.string());
 
   if (p.Errors().length != 0) {
     printParseErrors(p.Errors());
+    Deno.exit(1);
+  }
+
+  if (debug) {
+    console.log("### Parser \n");
+    console.log(program);
+    console.log("");
   }
 
   const store = new Map<string, any>();
@@ -34,12 +42,14 @@ export const StartParser = () => {
 
   const evaluated = Eval(program, env);
   if (evaluated != null) {
+    console.log("### Eval \n");
     console.log(evaluated.inspect());
+    console.log("");
   }
 };
 
 const printParseErrors = (errors: string[]) => {
   for (const error of errors) {
-    console.log('\t' + error + '\n');
+    console.log("\t" + error + "\n");
   }
 };
