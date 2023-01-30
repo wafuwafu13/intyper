@@ -4,6 +4,13 @@ This is TypeScript Implemention of
 [Writing An Interpreter In Go](https://interpreterbook.com/)\
 Copyright (c) 2016-2017 Thorsten Ball
 
+|Chapter|Feature|Impremented|
+|--|--|--|
+|1|Lexing|✔️|
+|2|Parsing|✔️|
+|3|Evaluation|✔️|
+|4|Extending the Interpreter|✔️|
+
 ### Usage
 
 ```
