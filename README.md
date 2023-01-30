@@ -1,6 +1,7 @@
 # intyper
 
-This is TypeScript Implemention of [Writing An Interpreter In Go](https://interpreterbook.com/)  
+This is TypeScript Implemention of
+[Writing An Interpreter In Go](https://interpreterbook.com/)\
 Copyright (c) 2016-2017 Thorsten Ball
 
 ### Usage
