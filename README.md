@@ -9,6 +9,7 @@
 ## How to try
 
 ### Run tests
+
 ```zsh
 $ git clone https://github.com/wafuwafu13/Interpreter-made-in-TypeScript.git
 $ cd Interpreter-made-in-TypeScript
@@ -21,11 +22,13 @@ $ npm run test
 Change here
 
 ```ts
-const input = '(5 + 10 * 2 + 15 / 3) * 2 + -10';
+const input = "(5 + 10 * 2 + 15 / 3) * 2 + -10";
 ```
+
 https://github.com/wafuwafu13/Interpreter-made-in-TypeScript/blob/bbdce3acd38986e1474565b5e960c1bc95369bc0/src/repl/repl.ts#L7
 
 and build
+
 ```zsh
 $ npm run build
 $ cd dist

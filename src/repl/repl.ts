@@ -1,10 +1,10 @@
-import { Lexer } from '../lexer/lexer';
-import { TokenDef } from '../token/token';
-import { Parser } from '../parser/parser';
-import { Eval } from '../evaluator/evaluator';
-import { Environment } from '../object/environment';
+import { Lexer } from "../lexer/lexer.ts";
+import { TokenDef } from "../token/token.ts";
+import { Parser } from "../parser/parser.ts";
+import { Eval } from "../evaluator/evaluator.ts";
+import { Environment } from "../object/environment.ts";
 
-const input = '(5 + 10 * 2 + 15 / 3) * 2 + -10';
+const input = "(5 + 10 * 2 + 15 / 3) * 2 + -10";
 
 export const StartLexer = () => {
   const l = new Lexer(input);
@@ -40,6 +40,6 @@ export const StartParser = () => {
 
 const printParseErrors = (errors: string[]) => {
   for (const error of errors) {
-    console.log('\t' + error + '\n');
+    console.log("\t" + error + "\n");
   }
 };

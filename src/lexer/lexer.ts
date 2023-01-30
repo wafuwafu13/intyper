@@ -1,9 +1,9 @@
 import {
-  TokenDef,
-  Token,
-  TokenProps,
   LookupIdent,
-} from '../../src/token/token';
+  Token,
+  TokenDef,
+  TokenProps,
+} from "../../src/token/token.ts";
 
 export interface LexerProps {
   input: string;
@@ -13,16 +13,16 @@ export interface LexerProps {
 }
 
 export class Lexer<T extends LexerProps> {
-  input: T['input'];
-  position: T['position'];
-  readPosition: T['readPosition'];
-  ch: T['ch'];
+  input: T["input"];
+  position: T["position"];
+  readPosition: T["readPosition"];
+  ch: T["ch"];
 
   constructor(
-    input: T['input'],
-    position: T['position'] = 0,
-    readPosition: T['readPosition'] = 0,
-    ch: T['ch'] = '',
+    input: T["input"],
+    position: T["position"] = 0,
+    readPosition: T["readPosition"] = 0,
+    ch: T["ch"] = "",
   ) {
     this.input = input;
     this.position = position;
@@ -34,7 +34,7 @@ export class Lexer<T extends LexerProps> {
 
   readChar(): void {
     if (this.readPosition >= this.input.length) {
-      this.ch = 'EOF';
+      this.ch = "EOF";
     } else {
       this.ch = this.input[this.readPosition];
     }
@@ -62,7 +62,7 @@ export class Lexer<T extends LexerProps> {
     const position = this.position + 1;
     while (true) {
       this.readChar();
-      if (this.ch == '"' || this.ch == 'EOF') {
+      if (this.ch == '"' || this.ch == "EOF") {
         break;
       }
     }
@@ -72,7 +72,7 @@ export class Lexer<T extends LexerProps> {
 
   isLetter(ch: string | number): boolean {
     let flag: boolean;
-    if (typeof ch === 'number') {
+    if (typeof ch === "number") {
       flag = false;
     } else if (ch.match(/[A-Z|a-z]/g)) {
       flag = true;
@@ -92,7 +92,7 @@ export class Lexer<T extends LexerProps> {
 
   isDigit(ch: string | number): boolean {
     let flag: boolean;
-    if (typeof ch === 'number') {
+    if (typeof ch === "number") {
       flag = false;
     } else if (ch.match(/[0-9]/g)) {
       flag = true;
@@ -104,10 +104,10 @@ export class Lexer<T extends LexerProps> {
 
   skipWhitespace(): void {
     while (
-      this.ch == ' ' ||
-      this.ch == '\t' ||
-      this.ch == '\n' ||
-      this.ch == '\r'
+      this.ch == " " ||
+      this.ch == "\t" ||
+      this.ch == "\n" ||
+      this.ch == "\r"
     ) {
       this.readChar();
     }
@@ -119,8 +119,8 @@ export class Lexer<T extends LexerProps> {
     this.skipWhitespace();
 
     switch (this.ch) {
-      case '=':
-        if (this.peekChar() == '=') {
+      case "=":
+        if (this.peekChar() == "=") {
           const ch = this.ch;
           this.readChar();
           const literal = String(ch) + String(this.ch);
@@ -132,29 +132,29 @@ export class Lexer<T extends LexerProps> {
       case '"':
         tok = this.newToken(TokenDef.STRING, this.readString());
         break;
-      case ':':
+      case ":":
         tok = this.newToken(TokenDef.COLON, this.ch);
         break;
-      case ';':
+      case ";":
         tok = this.newToken(TokenDef.SEMICOLON, this.ch);
         break;
-      case '(':
+      case "(":
         tok = this.newToken(TokenDef.LPAREN, this.ch);
         break;
-      case ')':
+      case ")":
         tok = this.newToken(TokenDef.RPAREN, this.ch);
         break;
-      case ',':
+      case ",":
         tok = this.newToken(TokenDef.COMMA, this.ch);
         break;
-      case '+':
+      case "+":
         tok = this.newToken(TokenDef.PLUS, this.ch);
         break;
-      case '-':
+      case "-":
         tok = this.newToken(TokenDef.MINUS, this.ch);
         break;
-      case '!':
-        if (this.peekChar() == '=') {
+      case "!":
+        if (this.peekChar() == "=") {
           const ch = this.ch;
           this.readChar();
           const literal = String(ch) + String(this.ch);
@@ -163,32 +163,32 @@ export class Lexer<T extends LexerProps> {
           tok = this.newToken(TokenDef.BANG, this.ch);
         }
         break;
-      case '/':
+      case "/":
         tok = this.newToken(TokenDef.SLASH, this.ch);
         break;
-      case '*':
+      case "*":
         tok = this.newToken(TokenDef.ASTERISK, this.ch);
         break;
-      case '<':
+      case "<":
         tok = this.newToken(TokenDef.LT, this.ch);
         break;
-      case '>':
+      case ">":
         tok = this.newToken(TokenDef.GT, this.ch);
         break;
-      case '{':
+      case "{":
         tok = this.newToken(TokenDef.LBRACE, this.ch);
         break;
-      case '}':
+      case "}":
         tok = this.newToken(TokenDef.RBRACE, this.ch);
         break;
-      case '[':
+      case "[":
         tok = this.newToken(TokenDef.LBRACKET, this.ch);
         break;
-      case ']':
+      case "]":
         tok = this.newToken(TokenDef.RBRACKET, this.ch);
         break;
-      case 'EOF':
-        tok = this.newToken(TokenDef.EOF, '');
+      case "EOF":
+        tok = this.newToken(TokenDef.EOF, "");
         break;
       default:
         if (this.isLetter(this.ch)) {

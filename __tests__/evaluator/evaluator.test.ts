@@ -1,7 +1,8 @@
-import { Lexer } from '../../src/lexer/lexer';
-import { Eval } from '../../src/evaluator/evaluator';
-import { Parser } from '../../src/parser/parser';
-import { Environment } from '../../src/object/environment';
+import { Lexer } from "../../src/lexer/lexer.ts";
+import { Eval } from "../../src/evaluator/evaluator.ts";
+import { Parser } from "../../src/parser/parser.ts";
+import { Environment } from "../../src/object/environment.ts";
+import { assertEquals } from "https://deno.land/std@0.174.0/testing/asserts.ts";
 // import { Integer } from '../../src/object/object';
 
 const testEval = (input: string) => {
@@ -15,21 +16,17 @@ const testEval = (input: string) => {
   return Eval(program, env);
 };
 
-describe('testStringLiteral', () => {
+Deno.test("testStringLiteral", () => {
   const input = `"Hello World!"`;
   const evaluated = testEval(input);
 
-  it('testObject', () => {
-    expect(evaluated.constructor.name).toBe('String');
-  });
+  assertEquals(evaluated.constructor.name, "String", "testObject");
 
-  it('testEval', () => {
-    expect(evaluated.value).toBe('Hello World!');
-  });
+  assertEquals(evaluated.value, "Hello World!", "testEval");
 });
 
 const testIntegerObject = (obj: any, expected: number): boolean => {
-  if (obj.constructor.name != 'Integer') {
+  if (obj.constructor.name != "Integer") {
     console.log(`object is not Integer. got ${obj.constructor.name}`);
     return false;
   }
@@ -41,46 +38,44 @@ const testIntegerObject = (obj: any, expected: number): boolean => {
   return true;
 };
 
-describe('testEvalIntegerExpression', () => {
+Deno.test("testEvalIntegerExpression", () => {
   const tests = [
     {
-      input: '5',
+      input: "5",
       expected: 5,
     },
     {
-      input: '10',
+      input: "10",
       expected: 10,
     },
     {
-      input: '-5',
+      input: "-5",
       expected: -5,
     },
     {
-      input: '-10',
+      input: "-10",
       expected: -10,
     },
-    { input: '5 + 5 + 5 + 5 - 10', expected: 10 },
-    { input: '2 * 2 * 2 * 2 * 2', expected: 32 },
-    { input: '-50 + 100 + -50', expected: 0 },
-    { input: '5 * 2 + 10', expected: 20 },
-    { input: '5 + 2 * 10', expected: 25 },
-    { input: '20 + 2 * -10', expected: 0 },
-    { input: '50 / 2 * 2 + 10', expected: 60 },
-    { input: '2 * (5 + 10)', expected: 30 },
-    { input: '3 * 3 * 3 + 10', expected: 37 },
-    { input: '3 * (3 * 3) + 10', expected: 37 },
-    { input: '(5 + 10 * 2 + 15 / 3) * 2 + -10', expected: 50 },
+    { input: "5 + 5 + 5 + 5 - 10", expected: 10 },
+    { input: "2 * 2 * 2 * 2 * 2", expected: 32 },
+    { input: "-50 + 100 + -50", expected: 0 },
+    { input: "5 * 2 + 10", expected: 20 },
+    { input: "5 + 2 * 10", expected: 25 },
+    { input: "20 + 2 * -10", expected: 0 },
+    { input: "50 / 2 * 2 + 10", expected: 60 },
+    { input: "2 * (5 + 10)", expected: 30 },
+    { input: "3 * 3 * 3 + 10", expected: 37 },
+    { input: "3 * (3 * 3) + 10", expected: 37 },
+    { input: "(5 + 10 * 2 + 15 / 3) * 2 + -10", expected: 50 },
   ];
   for (const test of tests) {
-    it('testEval', () => {
-      const evaluated = testEval(test.input);
-      expect(testIntegerObject(evaluated, test.expected)).toBe(true);
-    });
+    const evaluated = testEval(test.input);
+    assertEquals(testIntegerObject(evaluated, test.expected), true), "testEval";
   }
 });
 
 const testBooleanObject = (obj: any, expected: boolean): boolean => {
-  if (obj.constructor.name != 'Boolean') {
+  if (obj.constructor.name != "Boolean") {
     console.log(`object is not Boolean. got ${obj.constructor.name}`);
     return false;
   }
@@ -92,74 +87,70 @@ const testBooleanObject = (obj: any, expected: boolean): boolean => {
   return true;
 };
 
-describe('testBooelanExpression', () => {
+Deno.test("testBooelanExpression", () => {
   const tests = [
     {
-      input: 'true;',
+      input: "true;",
       expected: true,
     },
     {
-      input: 'false;',
+      input: "false;",
       expected: false,
     },
-    { input: '1 < 2', expected: true },
-    { input: '1 > 2', expected: false },
-    { input: '1 < 1', expected: false },
-    { input: '1 > 1', expected: false },
-    { input: '1 == 1', expected: true },
-    { input: '1 != 1', expected: false },
-    { input: '1 == 2', expected: false },
-    { input: '1 != 2', expected: true },
-    { input: 'true == true;', expected: true },
-    { input: 'false == false;', expected: true },
-    { input: 'true == false;', expected: false },
-    { input: 'true != false;', expected: true },
-    { input: 'false != true;', expected: true },
-    { input: '(1 < 2) == true;', expected: true },
-    { input: '(1 < 2) == false;', expected: false },
-    { input: '(1 > 2) == true;', expected: false },
-    { input: '(1 > 2) == false;', expected: true },
+    { input: "1 < 2", expected: true },
+    { input: "1 > 2", expected: false },
+    { input: "1 < 1", expected: false },
+    { input: "1 > 1", expected: false },
+    { input: "1 == 1", expected: true },
+    { input: "1 != 1", expected: false },
+    { input: "1 == 2", expected: false },
+    { input: "1 != 2", expected: true },
+    { input: "true == true;", expected: true },
+    { input: "false == false;", expected: true },
+    { input: "true == false;", expected: false },
+    { input: "true != false;", expected: true },
+    { input: "false != true;", expected: true },
+    { input: "(1 < 2) == true;", expected: true },
+    { input: "(1 < 2) == false;", expected: false },
+    { input: "(1 > 2) == true;", expected: false },
+    { input: "(1 > 2) == false;", expected: true },
   ];
   for (const test of tests) {
-    it('testEval', () => {
-      const evaluated = testEval(test.input);
-      expect(testBooleanObject(evaluated, test.expected)).toBe(true);
-    });
+    const evaluated = testEval(test.input);
+    assertEquals(testBooleanObject(evaluated, test.expected), true, "testEval");
   }
 });
 
-describe('testBangOperator', () => {
+Deno.test("testBangOperator", () => {
   const tests = [
     {
-      input: '!true;',
+      input: "!true;",
       expected: false,
     },
     {
-      input: '!false;',
+      input: "!false;",
       expected: true,
     },
     {
-      input: '!5',
+      input: "!5",
       expected: false,
     },
     {
-      input: '!!true;',
+      input: "!!true;",
       expected: true,
     },
     {
-      input: '!!false;',
+      input: "!!false;",
       expected: false,
     },
     {
-      input: '!!5',
+      input: "!!5",
       expected: true,
     },
   ];
   for (const test of tests) {
-    it('testEval', () => {
-      const evaluated = testEval(test.input);
-      expect(testBooleanObject(evaluated, test.expected)).toBe(true);
-    });
+    const evaluated = testEval(test.input);
+    assertEquals(testBooleanObject(evaluated, test.expected), true, "testEval");
   }
 });
 
@@ -171,44 +162,40 @@ const testNullObject = (obj: any): boolean => {
   return true;
 };
 
-describe('testIfElseExpressions', () => {
+Deno.test("testIfElseExpressions", () => {
   const tests_1 = [
-    { input: 'if (true) { 10 }', expcted: 10 },
-    { input: 'if (1) { 10 }', expcted: 10 },
-    { input: 'if (1 < 2) { 10 }', expcted: 10 },
-    { input: 'if (1 > 2) { 10 } else { 20 }', expcted: 20 },
-    { input: 'if (1 < 2) { 10 } else { 20 }', expcted: 10 },
+    { input: "if (true) { 10 }", expcted: 10 },
+    { input: "if (1) { 10 }", expcted: 10 },
+    { input: "if (1 < 2) { 10 }", expcted: 10 },
+    { input: "if (1 > 2) { 10 } else { 20 }", expcted: 20 },
+    { input: "if (1 < 2) { 10 } else { 20 }", expcted: 10 },
   ];
 
   for (const test of tests_1) {
     const evaluated = testEval(test.input);
 
-    it('testEval', () => {
-      expect(testIntegerObject(evaluated, test.expcted)).toBe(true);
-    });
+    assertEquals(testIntegerObject(evaluated, test.expcted), true, "testEval");
   }
 
   const tests_2 = [
-    { input: 'if (false) { 10 }', expcted: null },
-    { input: 'if (1 > 2) { 10 }', expcted: null },
+    { input: "if (false) { 10 }", expcted: null },
+    { input: "if (1 > 2) { 10 }", expcted: null },
   ];
 
   for (const test of tests_2) {
     const evaluated = testEval(test.input);
 
-    it('testEval', () => {
-      expect(testNullObject(evaluated)).toBe(true);
-    });
+    assertEquals(testNullObject(evaluated), true, "testEval");
   }
 });
 
-describe('testReturnStatements', () => {
+Deno.test("testReturnStatements", () => {
   const tests = [
-    { input: 'return 10;', expected: 10 },
-    { input: 'return 10; 9;', expected: 10 },
-    { input: 'return 2 * 5; 9;', expected: 10 },
-    { input: '9; return 2 * 5; 9;', expected: 10 },
-    { input: 'if (10 > 1) { return 10; }', expected: 10 },
+    { input: "return 10;", expected: 10 },
+    { input: "return 10; 9;", expected: 10 },
+    { input: "return 2 * 5; 9;", expected: 10 },
+    { input: "9; return 2 * 5; 9;", expected: 10 },
+    { input: "if (10 > 1) { return 10; }", expected: 10 },
     {
       input: `
 if (10 > 1) {
@@ -226,41 +213,39 @@ return 1;
   for (const test of tests) {
     const evaluated = testEval(test.input);
 
-    it('testEval', () => {
-      expect(testIntegerObject(evaluated, test.expected)).toBe(true);
-    });
+    assertEquals(testIntegerObject(evaluated, test.expected), true, "testEval");
   }
 });
 
-describe('testErrorHandling', () => {
+Deno.test("testErrorHandling", () => {
   const tests = [
     {
-      input: '5 + true;',
-      expectedMessage: 'type mismatch: INTEGER + BOOLEAN',
+      input: "5 + true;",
+      expectedMessage: "type mismatch: INTEGER + BOOLEAN",
     },
     {
-      input: '5 + true; 5;',
-      expectedMessage: 'type mismatch: INTEGER + BOOLEAN',
+      input: "5 + true; 5;",
+      expectedMessage: "type mismatch: INTEGER + BOOLEAN",
     },
     {
-      input: '-true;',
-      expectedMessage: 'unknown operator: -BOOLEAN',
+      input: "-true;",
+      expectedMessage: "unknown operator: -BOOLEAN",
     },
     {
-      input: 'true + false;',
-      expectedMessage: 'unknown operator: BOOLEAN + BOOLEAN',
+      input: "true + false;",
+      expectedMessage: "unknown operator: BOOLEAN + BOOLEAN",
     },
     {
-      input: 'true + false + true + false;',
-      expectedMessage: 'unknown operator: BOOLEAN + BOOLEAN',
+      input: "true + false + true + false;",
+      expectedMessage: "unknown operator: BOOLEAN + BOOLEAN",
     },
     {
-      input: '5; true + false; 5',
-      expectedMessage: 'unknown operator: BOOLEAN + BOOLEAN',
+      input: "5; true + false; 5",
+      expectedMessage: "unknown operator: BOOLEAN + BOOLEAN",
     },
     {
-      input: 'if (10 > 1) { true + false; }',
-      expectedMessage: 'unknown operator: BOOLEAN + BOOLEAN',
+      input: "if (10 > 1) { true + false; }",
+      expectedMessage: "unknown operator: BOOLEAN + BOOLEAN",
     },
     {
       input: `
@@ -272,15 +257,15 @@ return true + false;
 return 1;
 }
 `,
-      expectedMessage: 'unknown operator: BOOLEAN + BOOLEAN',
+      expectedMessage: "unknown operator: BOOLEAN + BOOLEAN",
     },
     {
-      input: 'foobar;',
-      expectedMessage: 'identifier not found: foobar',
+      input: "foobar;",
+      expectedMessage: "identifier not found: foobar",
     },
     {
       input: '"Hello" - "World"',
-      expectedMessage: 'unknown operator: STRING - STRING',
+      expectedMessage: "unknown operator: STRING - STRING",
     },
     // {
     //   input: `{"name": "Monkey"}[fn(x) { x }];`,
@@ -290,70 +275,64 @@ return 1;
 
   for (const test of tests) {
     const evaluated = testEval(test.input);
-    it('testObject', () => {
-      expect(evaluated.constructor.name).toBe('Error');
-    });
-    it('testEval', () => {
-      expect(evaluated.message).toBe(test.expectedMessage);
-    });
+    assertEquals(evaluated.constructor.name, "Error", "testObject");
+    assertEquals(evaluated.message, test.expectedMessage, "testEval");
   }
 });
 
-describe('testLetStatements', () => {
+Deno.test("testLetStatements", () => {
   const tests = [
-    { input: 'let a = 5; a;', expected: 5 },
-    { input: 'let a = 5 * 5; a;', expected: 25 },
-    { input: 'let a = 5; let b = a; b;', expected: 5 },
-    { input: 'let a = 5; let b = a; let c = a + b + 5; c;', expected: 15 },
+    { input: "let a = 5; a;", expected: 5 },
+    { input: "let a = 5 * 5; a;", expected: 25 },
+    { input: "let a = 5; let b = a; b;", expected: 5 },
+    { input: "let a = 5; let b = a; let c = a + b + 5; c;", expected: 15 },
   ];
 
   for (const test of tests) {
-    it('testEval', () => {
-      expect(testIntegerObject(testEval(test.input), test.expected)).toBe(true);
-    });
+    assertEquals(
+      testIntegerObject(testEval(test.input), test.expected),
+      true,
+      "testEval",
+    );
   }
 });
 
-describe('testFunctionObject', () => {
-  const input = 'fn(x) { x + 2; };';
+Deno.test("testFunctionObject", () => {
+  const input = "fn(x) { x + 2; };";
 
   const evaluated = testEval(input);
-  it('testObject', () => {
-    expect(evaluated.constructor.name).toBe('Function');
-  });
-  it('testParameter', () => {
-    expect(evaluated.parameters.length).toBe(1);
-    expect(evaluated.parameters[0].string()).toBe('x');
-  });
+  assertEquals(evaluated.constructor.name, "Function", "testObject");
+  assertEquals(evaluated.parameters.length, 1);
+  assertEquals(evaluated.parameters[0].string(), "x", "testParameter");
 
-  const expectedBody = '(x + 2)';
+  const expectedBody = "(x + 2)";
 
-  it('testBody', () => {
-    expect(evaluated.body.string()).toBe(expectedBody);
-  });
+  assertEquals(evaluated.body.string(), expectedBody, "testBody");
 });
 
-describe('testFunctionApplication', () => {
+Deno.test("testFunctionApplication", () => {
   const tests = [
-    { input: 'let identity = fn(x) { x; }; identity(5);', expected: 5 },
-    { input: 'let identity = fn(x) { return x; }; identity(5);', expected: 5 },
-    { input: 'let double = fn(x) { x * 2; }; double(5);', expected: 10 },
-    { input: 'let add = fn(x, y) { x + y; }; add(5, 5);', expected: 10 },
+    { input: "let identity = fn(x) { x; }; identity(5);", expected: 5 },
+    { input: "let identity = fn(x) { return x; }; identity(5);", expected: 5 },
+    { input: "let double = fn(x) { x * 2; }; double(5);", expected: 10 },
+    { input: "let add = fn(x, y) { x + y; }; add(5, 5);", expected: 10 },
     {
-      input: 'let add = fn(x, y) { x + y; }; add(5 + 5, add(5, 5));',
+      input: "let add = fn(x, y) { x + y; }; add(5 + 5, add(5, 5));",
       expected: 20,
     },
-    { input: 'fn(x) { x; }(5)', expected: 5 },
+    { input: "fn(x) { x; }(5)", expected: 5 },
   ];
 
   for (const test of tests) {
-    it('testEval', () => {
-      expect(testIntegerObject(testEval(test.input), test.expected)).toBe(true);
-    });
+    assertEquals(
+      testIntegerObject(testEval(test.input), test.expected),
+      true,
+      "testEval",
+    );
   }
 });
 
-describe('testEnclosingEnvironments', () => {
+Deno.test("testEnclosingEnvironments", () => {
   const input = `
 	let first = 10;
 	let second = 10;
@@ -367,12 +346,10 @@ describe('testEnclosingEnvironments', () => {
 	
 	ourFunction(20) + first + second;`;
 
-  it('testEval', () => {
-    expect(testIntegerObject(testEval(input), 70)).toBe(true);
-  });
+  assertEquals(testIntegerObject(testEval(input), 70), true, "testEval");
 });
 
-describe('testClosures', () => {
+Deno.test("testClosures", () => {
   const input = `
 	let newAdder = fn(x) {
 	  fn(y) { x + y };
@@ -381,25 +358,19 @@ describe('testClosures', () => {
 	let addTwo = newAdder(2);
 	addTwo(2);`;
 
-  it('testEval', () => {
-    expect(testIntegerObject(testEval(input), 4)).toBe(true);
-  });
+  assertEquals(testIntegerObject(testEval(input), 4), true, "testEval");
 });
 
-describe('testStringConcatenation', () => {
+Deno.test("testStringConcatenation", () => {
   const input = `"Hello" + " " + "World!"`;
 
   const evaluated = testEval(input);
 
-  it('testObject', () => {
-    expect(evaluated.constructor.name).toBe('String');
-  });
-  it('testEval', () => {
-    expect(evaluated.value).toBe('Hello World!');
-  });
+  assertEquals(evaluated.constructor.name, "String", "testObject");
+  assertEquals(evaluated.value, "Hello World!", "testEval");
 });
 
-describe('testBuiltinFunctions', () => {
+Deno.test("testBuiltinFunctions", () => {
   const test_1 = [
     { input: `len("")`, expected: 0 },
     { input: `len("four")`, expected: 4 },
@@ -412,128 +383,112 @@ describe('testBuiltinFunctions', () => {
   for (const test of test_1) {
     const evaluated = testEval(test.input);
 
-    it('testEval', () => {
-      expect(testIntegerObject(evaluated, test.expected)).toBe(true);
-    });
+    assertEquals(testIntegerObject(evaluated, test.expected), true, "testEval");
   }
 
   const test_2 = [
     {
       input: `len(1)`,
-      expected: 'argument to `len` not supported, got INTEGER',
+      expected: "argument to `len` not supported, got INTEGER",
     },
     {
       input: `len("one", "two")`,
-      expected: 'wrong number of arguments. got=2, want=1',
+      expected: "wrong number of arguments. got=2, want=1",
     },
     {
       input: `first("one")`,
-      expected: 'argument to `first` must be ARRAY, got STRING',
+      expected: "argument to `first` must be ARRAY, got STRING",
     },
     {
       input: `last(1)`,
-      expected: 'argument to `last` must be ARRAY, got INTEGER',
+      expected: "argument to `last` must be ARRAY, got INTEGER",
     },
   ];
 
   for (const test of test_2) {
     const evaluated = testEval(test.input);
 
-    it('testObject', () => {
-      expect(evaluated.constructor.name).toBe('Error');
-      expect(evaluated.message).toBe(test.expected);
-    });
+    assertEquals(evaluated.constructor.name, "Error", "testObject");
+    assertEquals(evaluated.message, test.expected, "testObject");
   }
 
-  it('testRest1', () => {
-    const input = `let a = [1, 2, 3, 4]; rest(a);`;
-    const evaluated = testEval(input);
+  let input = `let a = [1, 2, 3, 4]; rest(a);`;
+  let evaluated = testEval(input);
 
-    expect(evaluated.elements.length).toBe(3);
-    expect(evaluated.elements[0].value).toBe(2);
-    expect(evaluated.elements[1].value).toBe(3);
-    expect(evaluated.elements[2].value).toBe(4);
-  });
+  assertEquals(evaluated.elements.length, 3, "testRest1");
+  assertEquals(evaluated.elements[0].value, 2, "testRest1");
+  assertEquals(evaluated.elements[1].value, 3, "testRest1");
+  assertEquals(evaluated.elements[2].value, 4, "testRest1");
 
-  it('testRest2', () => {
-    const input = `let a = [1, 2, 3, 4]; rest(rest(rest(a)));`;
-    const evaluated = testEval(input);
+  input = `let a = [1, 2, 3, 4]; rest(rest(rest(a)));`;
+  evaluated = testEval(input);
 
-    expect(evaluated.elements.length).toBe(1);
-    expect(evaluated.elements[0].value).toBe(4);
-  });
+  assertEquals(evaluated.elements.length, 1, "testRest2");
+  assertEquals(evaluated.elements[0].value, 4, "testRest2");
 
-  it('testPush', () => {
-    const input = `let a = [1, 2, 3, 4]; let b = push(a, 5); b;`;
-    const evaluated = testEval(input);
+  input = `let a = [1, 2, 3, 4]; let b = push(a, 5); b;`;
+  evaluated = testEval(input);
 
-    expect(evaluated.elements.length).toBe(5);
-    expect(evaluated.elements[0].value).toBe(1);
-    expect(evaluated.elements[1].value).toBe(2);
-    expect(evaluated.elements[2].value).toBe(3);
-    expect(evaluated.elements[3].value).toBe(4);
-    expect(evaluated.elements[4].value).toBe(5);
-  });
+  assertEquals(evaluated.elements.length, 5, "testPush");
+  assertEquals(evaluated.elements[0].value, 1, "testPush");
+  assertEquals(evaluated.elements[1].value, 2, "testPush");
+  assertEquals(evaluated.elements[2].value, 3, "testPush");
+  assertEquals(evaluated.elements[3].value, 4, "testPush");
+  assertEquals(evaluated.elements[4].value, 5, "testPush");
 });
 
-describe('testArrayLiterals', () => {
-  const input = '[1, 2 * 2, 3 + 3]';
+Deno.test("testArrayLiterals", () => {
+  const input = "[1, 2 * 2, 3 + 3]";
 
   const evaluated = testEval(input);
 
-  it('testObject', () => {
-    expect(evaluated.constructor.name).toBe('Array');
-  });
+  assertEquals(evaluated.constructor.name, "Array", "testObject");
 
-  it('testEval', () => {
-    expect(evaluated.elements.length).toBe(3);
-    expect(testIntegerObject(evaluated.elements[0], 1)).toBe(true);
-    expect(testIntegerObject(evaluated.elements[1], 4)).toBe(true);
-    expect(testIntegerObject(evaluated.elements[2], 6)).toBe(true);
-  });
+  assertEquals(evaluated.elements.length, 3, "testEval");
+  assertEquals(testIntegerObject(evaluated.elements[0], 1), true, "testEval");
+  assertEquals(testIntegerObject(evaluated.elements[1], 4), true, "testEval");
+  assertEquals(testIntegerObject(evaluated.elements[2], 6), true, "testEval");
 });
 
-describe('testArrayIndexExpressions', () => {
+Deno.test("testArrayIndexExpressions", () => {
   const tests_1 = [
     {
-      input: '[1, 2, 3][0]',
+      input: "[1, 2, 3][0]",
       expected: 1,
     },
     {
-      input: '[1, 2, 3][1]',
+      input: "[1, 2, 3][1]",
       expected: 2,
     },
     {
-      input: '[1, 2, 3][2]',
+      input: "[1, 2, 3][2]",
       expected: 3,
     },
     {
-      input: 'let i = 0; [1][i];',
+      input: "let i = 0; [1][i];",
       expected: 1,
     },
     {
-      input: '[1, 2, 3][1 + 1];',
+      input: "[1, 2, 3][1 + 1];",
       expected: 3,
     },
     {
-      input: 'let myArray = [1, 2, 3]; myArray[2];',
+      input: "let myArray = [1, 2, 3]; myArray[2];",
       expected: 3,
     },
     {
-      input: 'let myArray = [1, 2, 3]; myArray[0] + myArray[1] + myArray[2];',
+      input: "let myArray = [1, 2, 3]; myArray[0] + myArray[1] + myArray[2];",
       expected: 6,
     },
     {
-      input: 'let myArray = [1, 2, 3]; let i = myArray[0]; myArray[i]',
+      input: "let myArray = [1, 2, 3]; let i = myArray[0]; myArray[i]",
       expected: 2,
     },
   ];
 
   for (const test of tests_1) {
     const evaluated = testEval(test.input);
-    it('testEval', () => {
-      expect(testIntegerObject(evaluated, test.expected)).toBe(true);
-    });
+    assertEquals(testIntegerObject(evaluated, test.expected), true, "testEval");
   }
 
   // TODO: TypeError: Cannot read property 'constructor' of null
@@ -551,12 +506,12 @@ describe('testArrayIndexExpressions', () => {
   //   for (const test of tests_2) {
   //     const evaluated = testEval(test.input);
   //     it('testEval', () => {
-  //       expect(testNullObject(evaluated)).toBe(true);
+  //       assertEquals(testNullObject(evaluated), true);
   //     });
   //   }
 });
 
-// describe('testHashLiterals', () => {
+// Deno.test('testHashLiterals', () => {
 //   const input = `{4: 4}`;
 //   const evaluated = testEval(input);
 
@@ -567,12 +522,12 @@ describe('testArrayIndexExpressions', () => {
 //   for (const exp in expected) {
 //     const pair = evaluated.pairs.get(exp); // TODO: undefined
 //     it('testEval', () => {
-//       expect(pair.value).toBe(expected[exp]);
+//       assertEquals(pair.value, expected[exp]);
 //     });
 //   }
 // });
 
-// describe('testHashIndexExpressions', () => {
+// Deno.test('testHashIndexExpressions', () => {
 //   const tests = [
 //     {
 //       input: `{5: 5}[5]`,
